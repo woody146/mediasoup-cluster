@@ -1,3 +1,9 @@
 import { startServer } from './utils/index.js';
 
-startServer();
+startServer([
+  {
+    method: 'GET',
+    url: '/',
+    handler: () => ({ data: 'data' }),
+  },
+]);
