@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import * as entitiesMap from './entities/index.js';
+import * as entitiesMap from '../entities/index.js';
 
 export const entities = Object.values(entitiesMap);
 
