@@ -1,5 +1,5 @@
-import { MediasoupRoom } from '../entities';
-import { BaseService } from './base';
+import { MediasoupRoom } from '../entities/index.js';
+import { BaseService } from './base.js';
 
 export class MediasoupRoomService extends BaseService {
   async add(data: { metadata?: any }) {

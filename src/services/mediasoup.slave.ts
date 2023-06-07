@@ -1,6 +1,6 @@
-import { constants } from '../constants';
-import { MediasoupSlave } from '../entities';
-import { BaseService } from './base';
+import { constants } from '../constants.js';
+import { MediasoupSlave } from '../entities/index.js';
+import { BaseService } from './base.js';
 
 export class MediasoupSlaveService extends BaseService {
   add(data: {

@@ -1,2 +1,2 @@
-export * from './mediasoup.slave';
-export * from './mediasoup.room';
+export * from './mediasoup.slave.js';
+export * from './mediasoup.room.js';
