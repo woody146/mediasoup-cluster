@@ -15,6 +15,6 @@ export class MediasoupSlaveService extends BaseService {
       throw new Error('Invalid for param');
     }
     Object.assign(mediasoupSlave, data);
-    this.dataSource.getRepository(MediasoupSlave).save(mediasoupSlave);
+    return this.dataSource.getRepository(MediasoupSlave).save(mediasoupSlave);
   }
 }
