@@ -1,3 +1,5 @@
+import 'node-fetch';
+
 import { startServer } from './utils/index.js';
 
 startServer([
