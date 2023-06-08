@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:master": "PORT=3000 node dist/run_master.js",
     "start:slave": "PORT=3002 node dist/run_slave.js",
-    "dev": "node dist/run_master.js",
+    "dev": "npm run start:slave",
     "prepare": "husky install"
   },
   "repository": {

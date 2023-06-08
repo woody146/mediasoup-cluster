@@ -1,4 +1,3 @@
-import { Raw } from 'typeorm';
 import { constants } from '../constants.js';
 import { MediasoupSlave } from '../entities/index.js';
 import { BaseService } from './base.js';
@@ -31,12 +30,14 @@ export class MediasoupSlaveService extends BaseService {
   }
 
   async getForNewRoom() {
-    const result = await this.dataSource.getRepository(MediasoupSlave).findOne({
-      where: {
-        for: constants.PRODUCER,
-        peerCount: Raw((alias) => `${alias} < maxPeer`),
-      },
-    });
+    const result = await this.dataSource
+      .createQueryBuilder()
+      .select('slave')
+      .from(MediasoupSlave, 'slave')
+      .where('slave.for = :for', { for: constants.PRODUCER })
+      .andWhere('slave.peerCount < slave.maxPeer')
+      .getOne();
+
     return result;
   }
 }
