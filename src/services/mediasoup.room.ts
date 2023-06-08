@@ -3,9 +3,8 @@ import { fetchApi } from '../utils/index.js';
 import { BaseService } from './base.js';
 import { MediasoupSlaveService } from './mediasoup.slave.js';
 
-// for master server
-
 export class MediasoupRoomService extends BaseService {
+  // for master server
   async create(data: { metadata?: any }) {
     const slave = await this.createService(
       MediasoupSlaveService
@@ -25,5 +24,19 @@ export class MediasoupRoomService extends BaseService {
       return mediasoupRoom.id;
     }
     throw { code: 451, message: 'Slave not found' };
+  }
+
+  /**
+   * Remove all rooms of current slave
+   */
+  async removeAll() {
+    const slave = await this.createService(MediasoupSlaveService).getCurrent();
+    if (slave) {
+      await this.dataSource
+        .createQueryBuilder(MediasoupRoom, 'MediasoupRoom')
+        .delete()
+        .where('slaveId = :slaveId', { slaveId: slave.id })
+        .execute();
+    }
   }
 }
