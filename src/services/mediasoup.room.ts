@@ -2,6 +2,8 @@ import { MediasoupRoom } from '../entities/index.js';
 import { BaseService } from './base.js';
 import { MediasoupSlaveService } from './mediasoup.slave.js';
 
+// for master server
+
 export class MediasoupRoomService extends BaseService {
   async create(data: { metadata?: any }) {
     const slave = await this.createService(

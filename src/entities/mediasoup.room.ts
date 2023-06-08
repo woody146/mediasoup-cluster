@@ -4,12 +4,17 @@ import {
   BaseEntity,
   CreateDateColumn,
   Column,
+  Index,
 } from 'typeorm';
 
 @Entity()
 export class MediasoupRoom extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
+
+  @Index()
+  @Column('integer')
+  slaveId!: number;
 
   @Column('text')
   routerId!: string;
