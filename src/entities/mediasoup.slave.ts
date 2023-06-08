@@ -1,6 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  Index,
+} from 'typeorm';
 
 @Entity()
+@Index(['internalHost', 'apiPort'], { unique: true })
 export class MediasoupSlave extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id!: number;
@@ -17,8 +24,8 @@ export class MediasoupSlave extends BaseEntity {
   @Column('integer')
   apiPort!: number;
 
-  @Column('integer', { nullable: true })
-  maxPeer?: number;
+  @Column('integer', { default: 1e9 })
+  maxPeer!: number;
 
   @Column('integer', { default: 0 })
   peerCount!: number;
