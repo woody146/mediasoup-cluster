@@ -1,3 +1,11 @@
-import { startServer } from './utils/index.js';
+import { MediasoupSlaveService } from './services/mediasoup.slave.js';
+import { startServer, getDataSource } from './utils/index.js';
 
-startServer([]);
+async function bootstrap() {
+  await startServer([]);
+  try {
+    await new MediasoupSlaveService(getDataSource()).addFromEnv();
+  } catch (e) {}
+}
+
+bootstrap();
