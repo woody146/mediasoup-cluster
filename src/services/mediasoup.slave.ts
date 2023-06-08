@@ -15,8 +15,26 @@ export class MediasoupSlaveService extends BaseService {
       throw new Error('Invalid for param');
     }
     Object.assign(mediasoupSlave, data);
-    await this.dataSource.getRepository(MediasoupSlave).save(mediasoupSlave);
+    await this.dataSource
+      .createQueryBuilder()
+      .insert()
+      .into(MediasoupSlave)
+      .values([{ ...data, peerCount: 0 }])
+      .orUpdate(
+        ['externalHost', 'for', 'maxPeer', 'peerCount'],
+        ['internalHost', 'apiPort']
+      )
+      .execute();
     return {};
+  }
+
+  async getCurrent() {
+    return this.dataSource.getRepository(MediasoupSlave).findOne({
+      where: {
+        internalHost: process.env.SLAVE_INTERNAL_HOST || 'localhost',
+        apiPort: Number(process.env.PORT || 80),
+      },
+    });
   }
 
   addFromEnv() {
