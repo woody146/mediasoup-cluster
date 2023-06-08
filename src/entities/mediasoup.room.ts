@@ -11,6 +11,9 @@ export class MediasoupRoom extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
+  @Column('text')
+  routerId!: string;
+
   @Column({ type: 'jsonb', nullable: true })
   metadata?: any;
 
