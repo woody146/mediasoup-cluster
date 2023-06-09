@@ -1,5 +1,5 @@
 import { types } from 'mediasoup';
-import { mediasoupWorkerManager } from './mediasoup.worker.js';
+import { mediasoupWorkerManager } from './worker.js';
 
 class MediasoupRouterManager {
   static routers: Array<types.Router> = [];

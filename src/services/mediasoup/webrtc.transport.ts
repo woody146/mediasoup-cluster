@@ -1,8 +1,8 @@
 import { types } from 'mediasoup';
-import { ServiceError } from './base.js';
-import { mediasoupRouterManager } from './mediasoup.router.js';
+import { ServiceError } from '../base.js';
+import { mediasoupRouterManager } from './router.js';
 
-class WebRTCTransportManager {
+class MediasoupWebRTCTransportManager {
   static transports: Array<types.Transport> = [];
 
   async create(routerId: string) {
@@ -31,7 +31,7 @@ class WebRTCTransportManager {
           await transport.setMaxIncomingBitrate(maxIncomingBitrate);
         } catch (error) {}
       }
-      WebRTCTransportManager.transports.push(transport);
+      MediasoupWebRTCTransportManager.transports.push(transport);
       return {
         id: transport.id,
         iceParameters: transport.iceParameters,
@@ -43,4 +43,5 @@ class WebRTCTransportManager {
   }
 }
 
-export const webRTCTransportManager = new WebRTCTransportManager();
+export const mediasoupWebRTCTransportManager =
+  new MediasoupWebRTCTransportManager();
