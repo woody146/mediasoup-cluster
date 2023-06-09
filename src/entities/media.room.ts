@@ -4,17 +4,24 @@ import {
   BaseEntity,
   CreateDateColumn,
   Column,
-  Index,
+  ManyToOne,
+  OneToMany,
 } from 'typeorm';
+import { MediaSlave } from './media.slave.js';
+import { MediaPeer } from './media.peer.js';
 
 @Entity()
-export class MediasoupRoom extends BaseEntity {
+export class MediaRoom extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
-  @Index()
   @Column('integer')
   slaveId!: number;
+
+  @ManyToOne(() => MediaSlave, (slave) => slave.rooms, {
+    onDelete: 'CASCADE',
+  })
+  slave!: MediaSlave;
 
   @Column('text')
   routerId!: string;
@@ -24,4 +31,7 @@ export class MediasoupRoom extends BaseEntity {
 
   @CreateDateColumn()
   createDate!: Date;
+
+  @OneToMany(() => MediaPeer, (peer) => peer.room)
+  peers!: MediaRoom[];
 }
