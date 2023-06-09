@@ -51,6 +51,31 @@ export class PeerService extends BaseService {
     throw new ServiceError(404, 'Peer not found');
   }
 
+  async createConsumer(data: { roomId: string; metadata?: any }) {
+    const room = await this.createService(RoomService).get({
+      roomId: data.roomId,
+    });
+    if (room) {
+      const result = await fetchApi({
+        host: room.slave.externalHost,
+        port: room.slave.apiPort,
+        path: '/routers/:routerId/consumer_transports',
+        method: 'POST',
+        data: { routerId: room.routerId },
+      });
+      const mediaPeer = new MediaPeer();
+      mediaPeer.id = result.id;
+      mediaPeer.routerId = room.routerId;
+      mediaPeer.slaveId = room.slave.id;
+      mediaPeer.type = constants.CONSUMER;
+      mediaPeer.roomId = room.id;
+
+      await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
+      return result;
+    }
+    throw new ServiceError(404, 'Room not found');
+  }
+
   async get(data: { peerId: string }) {
     return this.dataSource.getRepository(MediaPeer).findOne({
       relations: { slave: true },

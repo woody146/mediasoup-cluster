@@ -18,6 +18,13 @@ export default [
   },
   {
     method: 'POST',
+    url: '/rooms/:roomId/consumer_peers',
+    handler: (data) => {
+      return new PeerService(getDataSource()).createConsumer(data);
+    },
+  },
+  {
+    method: 'POST',
     url: '/peers/:peerId/produce',
     handler: (data) => {
       return new PeerService(getDataSource()).produce(data);

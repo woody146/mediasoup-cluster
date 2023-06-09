@@ -56,5 +56,12 @@ class MediasoupProducerWebRTCTransportManager extends MediasoupWebRTCTransportMa
   }
 }
 
+class MediasoupConsumerWebRTCTransportManager extends MediasoupProducerWebRTCTransportManager {
+  static transports: Array<types.Transport> = [];
+}
+
 export const mediasoupProducerWebRTCTransportManager =
   new MediasoupProducerWebRTCTransportManager();
+
+export const mediasoupConsumerWebRTCTransportManager =
+  new MediasoupConsumerWebRTCTransportManager();
