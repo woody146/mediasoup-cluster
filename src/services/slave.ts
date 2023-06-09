@@ -1,5 +1,5 @@
 import { constants } from '../constants.js';
-import { MediasoupSlave } from '../entities/index.js';
+import { MediaSlave } from '../entities/index.js';
 import { BaseService } from './base.js';
 
 export class SlaveService extends BaseService {
@@ -10,7 +10,7 @@ export class SlaveService extends BaseService {
     apiPort: number;
     maxPeer?: number;
   }) {
-    const mediasoupSlave = new MediasoupSlave();
+    const mediasoupSlave = new MediaSlave();
     if (![constants.CONSUMER, constants.PRODUCER].includes(data.for)) {
       throw new Error('Invalid for param');
     }
@@ -18,7 +18,7 @@ export class SlaveService extends BaseService {
     await this.dataSource
       .createQueryBuilder()
       .insert()
-      .into(MediasoupSlave)
+      .into(MediaSlave)
       .values([{ ...data, peerCount: 0 }])
       .orUpdate(
         ['externalHost', 'for', 'maxPeer', 'peerCount'],
@@ -28,13 +28,26 @@ export class SlaveService extends BaseService {
     return {};
   }
 
-  async getCurrent() {
-    return this.dataSource.getRepository(MediasoupSlave).findOne({
+  getCurrent() {
+    return this.dataSource.getRepository(MediaSlave).findOne({
       where: {
         internalHost: process.env.SLAVE_INTERNAL_HOST || 'localhost',
         apiPort: Number(process.env.PORT || 80),
       },
     });
+  }
+
+  removeCurrent() {
+    return this.dataSource
+      .createQueryBuilder(MediaSlave, 'MediaSlave')
+      .delete()
+      .where('internalHost = :internalHost', {
+        internalHost: process.env.SLAVE_INTERNAL_HOST || 'localhost',
+      })
+      .andWhere('apiPort = :apiPort', {
+        apiPort: Number(process.env.PORT || 80),
+      })
+      .execute();
   }
 
   addFromEnv() {
@@ -47,15 +60,13 @@ export class SlaveService extends BaseService {
     });
   }
 
-  async getForNewRoom() {
-    const result = await this.dataSource
+  getForNewRoom() {
+    return this.dataSource
       .createQueryBuilder()
       .select('slave')
-      .from(MediasoupSlave, 'slave')
+      .from(MediaSlave, 'slave')
       .where('slave.for = :for', { for: constants.PRODUCER })
       .andWhere('slave.peerCount < slave.maxPeer')
       .getOne();
-
-    return result;
   }
 }

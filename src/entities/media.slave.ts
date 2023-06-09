@@ -4,11 +4,14 @@ import {
   Column,
   BaseEntity,
   Index,
+  OneToMany,
 } from 'typeorm';
+import { MediaRoom } from './media.room.js';
+import { MediaPeer } from './media.peer.js';
 
 @Entity()
 @Index(['internalHost', 'apiPort'], { unique: true })
-export class MediasoupSlave extends BaseEntity {
+export class MediaSlave extends BaseEntity {
   @PrimaryGeneratedColumn('increment')
   id!: number;
 
@@ -29,4 +32,10 @@ export class MediasoupSlave extends BaseEntity {
 
   @Column('integer', { default: 0 })
   peerCount!: number;
+
+  @OneToMany(() => MediaRoom, (room) => room.slave)
+  rooms!: MediaRoom[];
+
+  @OneToMany(() => MediaPeer, (peer) => peer.slave)
+  peers!: MediaRoom[];
 }
