@@ -31,6 +31,9 @@ export class MediaPeer extends BaseEntity {
   @Column('text')
   routerId!: string;
 
+  @Column('text')
+  type!: string; // consumer | producer
+
   @Column({ type: 'jsonb', nullable: true })
   metadata?: any;
 
