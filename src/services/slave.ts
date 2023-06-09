@@ -2,7 +2,7 @@ import { constants } from '../constants.js';
 import { MediasoupSlave } from '../entities/index.js';
 import { BaseService } from './base.js';
 
-export class MediasoupSlaveService extends BaseService {
+export class SlaveService extends BaseService {
   async add(data: {
     internalHost: string;
     externalHost: string;

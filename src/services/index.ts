@@ -1,4 +1,3 @@
-export * from './mediasoup.slave.js';
-export * from './mediasoup.room.js';
-export * from './mediasoup.worker.js';
-export * from './mediasoup.router.js';
+export * from './slave.js';
+export * from './room.js';
+export * from './mediasoup/index.js';
