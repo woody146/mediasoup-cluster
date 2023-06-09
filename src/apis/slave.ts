@@ -1,11 +1,11 @@
 import {
-  mediasoupRouterManager,
-  mediasoupProducerWebRTCTransportManager,
   mediasoupProducerManager,
-} from '../../services/index.js';
-import { RouteConfig } from '../../utils/index.js';
+  mediasoupProducerWebRTCTransportManager,
+  mediasoupRouterManager,
+} from '../services/index.js';
+import { RouteConfig } from '../utils/index.js';
 
-export const router: Array<RouteConfig> = [
+export default [
   {
     method: 'POST',
     url: '/routers',
@@ -27,4 +27,4 @@ export const router: Array<RouteConfig> = [
       return mediasoupProducerManager.create(data);
     },
   },
-];
+] as RouteConfig[];
