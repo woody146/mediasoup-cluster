@@ -1,6 +1,6 @@
 import { MediasoupRoom } from '../entities/index.js';
 import { fetchApi } from '../utils/index.js';
-import { BaseService } from './base.js';
+import { ServiceError, BaseService } from './base.js';
 import { MediasoupSlaveService } from './mediasoup.slave.js';
 
 export class MediasoupRoomService extends BaseService {
@@ -23,7 +23,7 @@ export class MediasoupRoomService extends BaseService {
       await this.dataSource.getRepository(MediasoupRoom).save(mediasoupRoom);
       return mediasoupRoom.id;
     }
-    throw { code: 451, message: 'Slave not found' };
+    throw new ServiceError(404, 'Slave not found');
   }
 
   /**
