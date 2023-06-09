@@ -5,7 +5,7 @@ import { mediasoupRouterManager } from './router.js';
 class MediasoupWebRTCTransportManager {
   static transports: Array<types.Transport> = [];
 
-  async create(routerId: string) {
+  async createProducer(routerId: string) {
     const router = mediasoupRouterManager.get(routerId);
     if (router) {
       const maxIncomingBitrate = Number(

@@ -14,19 +14,20 @@ export class RoomService extends BaseService {
         path: '/routers',
         method: 'POST',
       });
-      const mediasoupRoom = new MediaRoom();
-      mediasoupRoom.routerId = result.id;
-      mediasoupRoom.slaveId = slave.id;
-      Object.assign(mediasoupRoom, data);
-      await this.dataSource.getRepository(MediaRoom).save(mediasoupRoom);
-      return mediasoupRoom.id;
+      const mediaRoom = new MediaRoom();
+      mediaRoom.routerId = result.id;
+      mediaRoom.slaveId = slave.id;
+      Object.assign(mediaRoom, data);
+      await this.dataSource.getRepository(MediaRoom).save(mediaRoom);
+      return { id: mediaRoom.id };
     }
     throw new ServiceError(404, 'Slave not found');
   }
 
   async get(data: { id: string }) {
-    return this.dataSource
-      .getRepository(MediaRoom)
-      .findOne({ where: { id: data.id } });
+    return this.dataSource.getRepository(MediaRoom).findOne({
+      relations: { slave: true },
+      where: { id: data.id },
+    });
   }
 }

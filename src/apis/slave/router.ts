@@ -14,9 +14,9 @@ export const router: Array<RouteConfig> = [
   },
   {
     method: 'POST',
-    url: '/routers/:routerId/transports',
+    url: '/routers/:routerId/producer_transports',
     handler: (data) => {
-      return mediasoupWebRTCTransportManager.create(data.routerId);
+      return mediasoupWebRTCTransportManager.createProducer(data.routerId);
     },
   },
 ];
