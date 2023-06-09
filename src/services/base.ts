@@ -9,3 +9,7 @@ export class BaseService {
     return new serviceClass(this.dataSource);
   }
 }
+
+export class ServiceError {
+  constructor(public code: number, public message: string) {}
+}
