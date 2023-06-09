@@ -1,4 +1,5 @@
 import {
+  mediasoupConsumerManager,
   mediasoupConsumerWebRTCTransportManager,
   mediasoupProducerManager,
   mediasoupProducerWebRTCTransportManager,
@@ -33,6 +34,13 @@ export default [
     url: '/transports/:transportId/producer',
     handler: (data) => {
       return mediasoupProducerManager.create(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/transports/:transportId/consumer',
+    handler: (data) => {
+      return mediasoupConsumerManager.create(data);
     },
   },
 ] as RouteConfig[];

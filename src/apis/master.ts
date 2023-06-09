@@ -30,4 +30,11 @@ export default [
       return new PeerService(getDataSource()).produce(data);
     },
   },
+  {
+    method: 'POST',
+    url: '/peers/:peerId/consume',
+    handler: (data) => {
+      return new PeerService(getDataSource()).consume(data);
+    },
+  },
 ] as RouteConfig[];
