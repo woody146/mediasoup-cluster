@@ -1,4 +1,5 @@
 import {
+  mediasoupConsumerWebRTCTransportManager,
   mediasoupProducerManager,
   mediasoupProducerWebRTCTransportManager,
   mediasoupRouterManager,
@@ -18,6 +19,13 @@ export default [
     url: '/routers/:routerId/producer_transports',
     handler: (data) => {
       return mediasoupProducerWebRTCTransportManager.create(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/routers/:routerId/consumer_transports',
+    handler: (data) => {
+      return mediasoupConsumerWebRTCTransportManager.create(data);
     },
   },
   {
