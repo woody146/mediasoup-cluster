@@ -5,8 +5,18 @@ import { mediasoupRouterManager } from './router.js';
 class MediasoupWebRTCTransportManager {
   static transports: Array<types.Transport> = [];
 
-  async createProducer(routerId: string) {
-    const router = mediasoupRouterManager.get(routerId);
+  get(transportId: string) {
+    return (
+      this.constructor as typeof MediasoupWebRTCTransportManager
+    ).transports.find((item) => item.id === transportId);
+  }
+}
+
+class MediasoupProducerWebRTCTransportManager extends MediasoupWebRTCTransportManager {
+  static transports: Array<types.Transport> = [];
+
+  async create(data: { routerId: string }) {
+    const router = mediasoupRouterManager.get(data.routerId);
     if (router) {
       const maxIncomingBitrate = Number(
         process.env.MEDIASOUP_WEBRTC_TRANSPORT_MAX_INCOMING_BITRATE
@@ -31,7 +41,10 @@ class MediasoupWebRTCTransportManager {
           await transport.setMaxIncomingBitrate(maxIncomingBitrate);
         } catch (error) {}
       }
-      MediasoupWebRTCTransportManager.transports.push(transport);
+      (
+        this.constructor as typeof MediasoupProducerWebRTCTransportManager
+      ).transports.push(transport);
+
       return {
         id: transport.id,
         iceParameters: transport.iceParameters,
@@ -43,5 +56,5 @@ class MediasoupWebRTCTransportManager {
   }
 }
 
-export const mediasoupWebRTCTransportManager =
-  new MediasoupWebRTCTransportManager();
+export const mediasoupProducerWebRTCTransportManager =
+  new MediasoupProducerWebRTCTransportManager();
