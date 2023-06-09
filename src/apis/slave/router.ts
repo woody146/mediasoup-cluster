@@ -1,6 +1,7 @@
 import {
   mediasoupRouterManager,
-  mediasoupWebRTCTransportManager,
+  mediasoupProducerWebRTCTransportManager,
+  mediasoupProducerManager,
 } from '../../services/index.js';
 import { RouteConfig } from '../../utils/index.js';
 
@@ -16,7 +17,14 @@ export const router: Array<RouteConfig> = [
     method: 'POST',
     url: '/routers/:routerId/producer_transports',
     handler: (data) => {
-      return mediasoupWebRTCTransportManager.createProducer(data.routerId);
+      return mediasoupProducerWebRTCTransportManager.create(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/transports/:transportId/producer',
+    handler: (data) => {
+      return mediasoupProducerManager.create(data);
     },
   },
 ];

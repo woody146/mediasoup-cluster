@@ -16,4 +16,11 @@ export const room: Array<RouteConfig> = [
       return new PeerService(getDataSource()).createProducer(data);
     },
   },
+  {
+    method: 'POST',
+    url: '/peers/:peerId/produce',
+    handler: (data) => {
+      return new PeerService(getDataSource()).produce(data);
+    },
+  },
 ];
