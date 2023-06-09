@@ -1,14 +1,12 @@
 import { MediasoupRoom } from '../entities/index.js';
 import { fetchApi } from '../utils/index.js';
 import { ServiceError, BaseService } from './base.js';
-import { MediasoupSlaveService } from './mediasoup.slave.js';
+import { SlaveService } from './slave.js';
 
-export class MediasoupRoomService extends BaseService {
+export class RoomService extends BaseService {
   // for master server
   async create(data: { metadata?: any }) {
-    const slave = await this.createService(
-      MediasoupSlaveService
-    ).getForNewRoom();
+    const slave = await this.createService(SlaveService).getForNewRoom();
     if (slave) {
       const result = await fetchApi({
         host: slave.externalHost,
@@ -26,11 +24,17 @@ export class MediasoupRoomService extends BaseService {
     throw new ServiceError(404, 'Slave not found');
   }
 
+  async get(data: { id: string }) {
+    return this.dataSource
+      .getRepository(MediasoupRoom)
+      .findOne({ where: { id: data.id } });
+  }
+
   /**
    * Remove all rooms of current slave
    */
   async removeAll() {
-    const slave = await this.createService(MediasoupSlaveService).getCurrent();
+    const slave = await this.createService(SlaveService).getCurrent();
     if (slave) {
       await this.dataSource
         .createQueryBuilder(MediasoupRoom, 'MediasoupRoom')
