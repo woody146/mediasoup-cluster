@@ -24,10 +24,10 @@ export class RoomService extends BaseService {
     throw new ServiceError(404, 'Slave not found');
   }
 
-  async get(data: { id: string }) {
+  async get(data: { roomId: string }) {
     return this.dataSource.getRepository(MediaRoom).findOne({
       relations: { slave: true },
-      where: { id: data.id },
+      where: { id: data.roomId },
     });
   }
 }
