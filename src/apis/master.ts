@@ -1,7 +1,7 @@
-import { PeerService, RoomService } from '../../services/index.js';
-import { RouteConfig, getDataSource } from '../../utils/index.js';
+import { PeerService, RoomService } from '../services/index.js';
+import { RouteConfig, getDataSource } from '../utils/index.js';
 
-export const room: Array<RouteConfig> = [
+export default [
   {
     method: 'POST',
     url: '/rooms',
@@ -23,4 +23,4 @@ export const room: Array<RouteConfig> = [
       return new PeerService(getDataSource()).produce(data);
     },
   },
-];
+] as RouteConfig[];

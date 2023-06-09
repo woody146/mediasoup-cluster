@@ -1,6 +1,6 @@
 import 'node-fetch';
 
-import apiRouters from './apis/slave/index.js';
+import apiRouters from './apis/slave.js';
 import { SlaveService, mediasoupWorkerManager } from './services/index.js';
 import { startServer, getDataSource } from './utils/index.js';
 
