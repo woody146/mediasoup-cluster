@@ -11,7 +11,11 @@ export const fetchApi = ({
   if (method === 'GET') {
     path += '?' + new URLSearchParams(data);
   } else {
-    body = JSON.stringify(data);
+    body = JSON.stringify(data || {});
   }
-  return fetch(path, { method, body }).then((resp) => resp.json());
+  return fetch(path, {
+    method,
+    body,
+    headers: { 'Content-Type': 'application/json' },
+  }).then((resp) => resp.json());
 };

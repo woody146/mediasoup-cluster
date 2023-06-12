@@ -10,6 +10,15 @@ class MediasoupWebRTCTransportManager {
       this.constructor as typeof MediasoupWebRTCTransportManager
     ).transports.find((item) => item.id === transportId);
   }
+
+  async connect(data: { transportId: string; dtlsParameters: any }) {
+    const transport = this.get(data.transportId);
+    if (transport) {
+      await transport.connect({ dtlsParameters: data.dtlsParameters });
+      return {};
+    }
+    throw new ServiceError(404, 'Transport not found');
+  }
 }
 
 class MediasoupProducerWebRTCTransportManager extends MediasoupWebRTCTransportManager {

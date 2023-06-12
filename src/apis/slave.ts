@@ -38,6 +38,20 @@ export default [
   },
   {
     method: 'POST',
+    url: '/producer_transports/:transportId/connect',
+    handler: (data) => {
+      return mediasoupProducerWebRTCTransportManager.connect(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/consumer_transports/:transportId/connect',
+    handler: (data) => {
+      return mediasoupConsumerWebRTCTransportManager.connect(data);
+    },
+  },
+  {
+    method: 'POST',
     url: '/transports/:transportId/producer',
     handler: (data) => {
       return mediasoupProducerManager.create(data);
