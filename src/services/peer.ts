@@ -47,6 +47,7 @@ export class PeerService extends BaseService {
 
       peer.producerId = result.id;
       await this.dataSource.getRepository(MediaPeer).save(peer);
+      return result;
     }
     throw new ServiceError(404, 'Peer not found');
   }
@@ -100,6 +101,27 @@ export class PeerService extends BaseService {
 
       peer.consumerId = result.id;
       await this.dataSource.getRepository(MediaPeer).save(peer);
+      return result;
+    }
+    throw new ServiceError(404, 'Peer not found');
+  }
+
+  async connect(data: { peerId: string; dtlsParameters: any }) {
+    const peer = await this.get({ peerId: data.peerId });
+    if (peer) {
+      const result = await fetchApi({
+        host: peer.slave.externalHost,
+        port: peer.slave.apiPort,
+        path:
+          peer.type === constants.CONSUMER
+            ? `/consumer_transports/:transportId/connect`
+            : `/producer_transports/:transportId/connect`,
+        method: 'POST',
+        data: {
+          transportId: peer.id,
+          dtlsParameters: data.dtlsParameters,
+        },
+      });
       return result;
     }
     throw new ServiceError(404, 'Peer not found');
