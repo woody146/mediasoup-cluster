@@ -31,10 +31,10 @@ export class MediaPeer extends BaseEntity {
   @Column('text')
   routerId!: string;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   producerId?: string;
 
-  @Column('text')
+  @Column('text', { nullable: true })
   consumerId?: string;
 
   @Column('text')
