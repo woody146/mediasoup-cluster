@@ -1,5 +1,6 @@
 import { types } from 'mediasoup';
 import { mediasoupWorkerManager } from './worker.js';
+import { ServiceError } from '../base.js';
 
 class MediasoupRouterManager {
   static routers: Array<types.Router> = [];
@@ -11,7 +12,16 @@ class MediasoupRouterManager {
     MediasoupRouterManager.routers.push(router);
     return {
       id: router.id,
+      rtpCapabilities: router.rtpCapabilities,
     };
+  }
+
+  getRtpCapabilities(id: string) {
+    const router = this.get(id);
+    if (router) {
+      return { rtpCapabilities: router.rtpCapabilities };
+    }
+    throw new ServiceError(404, 'Router not found');
   }
 
   get(id: string) {
