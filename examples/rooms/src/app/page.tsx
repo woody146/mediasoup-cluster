@@ -1,21 +1,25 @@
 'use client';
-
-import { fetchApi } from '../services';
+import { Device, types } from 'mediasoup-client';
+import { useState } from 'react';
+import { CreateRoom } from '../components';
 
 export default function Home() {
-  const createRoom = async () => {
-    const data = await fetchApi({ path: '/api/rooms', method: 'POST' });
-    console.log(data);
-  };
-
+  const [device, setDevice] = useState<types.Device>();
   return (
     <div className="text-center py-8">
-      <button
-        className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500"
-        onClick={() => createRoom()}
-      >
-        Create Room
-      </button>
+      {device ? (
+        JSON.stringify(device)
+      ) : (
+        <CreateRoom
+          onSuccess={async (data) => {
+            const newDevice = new Device();
+            await newDevice.load({
+              routerRtpCapabilities: data.rtpCapabilities,
+            });
+            setDevice(newDevice);
+          }}
+        />
+      )}
     </div>
   );
 }

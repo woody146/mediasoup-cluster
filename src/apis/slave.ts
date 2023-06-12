@@ -16,6 +16,13 @@ export default [
     },
   },
   {
+    method: 'GET',
+    url: '/routers/:routerId',
+    handler: (data) => {
+      return mediasoupRouterManager.getRtpCapabilities(data.routerId);
+    },
+  },
+  {
     method: 'POST',
     url: '/routers/:routerId/producer_transports',
     handler: (data) => {
