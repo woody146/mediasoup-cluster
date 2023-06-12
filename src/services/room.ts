@@ -19,7 +19,7 @@ export class RoomService extends BaseService {
       mediaRoom.slaveId = slave.id;
       Object.assign(mediaRoom, data);
       await this.dataSource.getRepository(MediaRoom).save(mediaRoom);
-      return { id: mediaRoom.id };
+      return { ...result, id: mediaRoom.id };
     }
     throw new ServiceError(404, 'Slave not found');
   }
@@ -29,5 +29,20 @@ export class RoomService extends BaseService {
       relations: { slave: true },
       where: { id: data.roomId },
     });
+  }
+
+  async getRtpCapabilities(data: { roomId: string }) {
+    const room = await this.get(data);
+    if (room) {
+      const result = await fetchApi({
+        host: room.slave.externalHost,
+        port: room.slave.apiPort,
+        path: '/routers/:routerId',
+        method: 'GET',
+        data: { routerId: room.routerId },
+      });
+      return result;
+    }
+    throw new ServiceError(404, 'Room not found');
   }
 }
