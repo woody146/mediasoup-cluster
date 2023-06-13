@@ -55,12 +55,12 @@ export class SlaveService extends BaseService {
     });
   }
 
-  getForNewRoom() {
+  getFor(type: string) {
     return this.dataSource
       .createQueryBuilder()
       .select('slave')
       .from(MediaSlave, 'slave')
-      .where('slave.for = :for', { for: constants.PRODUCER })
+      .where('slave.for = :for', { for: type })
       .andWhere('slave.peerCount < slave.maxPeer')
       .getOne();
   }

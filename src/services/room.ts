@@ -1,12 +1,14 @@
+import { constants } from '../constants.js';
 import { MediaRoom } from '../entities/index.js';
 import { fetchApi } from '../utils/index.js';
 import { ServiceError, BaseService } from './base.js';
 import { SlaveService } from './slave.js';
 
 export class RoomService extends BaseService {
-  // for master server
   async create(data: { metadata?: any }) {
-    const slave = await this.createService(SlaveService).getForNewRoom();
+    const slave = await this.createService(SlaveService).getFor(
+      constants.PRODUCER
+    );
     if (slave) {
       const result = await fetchApi({
         host: slave.internalHost,
