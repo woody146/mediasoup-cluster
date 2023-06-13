@@ -11,6 +11,9 @@ export function Producer({
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [log, setLog] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [useVideo, setuseVideo] = useState(false);
+  const [useAudio, setUseAudio] = useState(false);
 
   const produce = async () => {
     let stream: any;
@@ -79,13 +82,17 @@ export function Producer({
     });
 
     try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: useVideo,
+        audio: useAudio,
+      });
       const track = stream.getVideoTracks()[0];
       const params = { track };
 
       await transport.produce(params);
     } catch (err: any) {
       setLog(err.toString());
+      throw err;
     }
   };
 
@@ -93,10 +100,37 @@ export function Producer({
     <div className="flex flex-col">
       <video ref={ref} controls autoPlay playsInline></video>
       <div className="pt-4">{log}</div>
-      <div className="pt-4">
+      <div className="pt-4 flex justify-center content-center space-x-4">
+        <div>
+          <input
+            id="useVideo"
+            type="checkbox"
+            disabled={success}
+            checked={useVideo}
+            onChange={() => setuseVideo(!useVideo)}
+            className="default:ring-2 mr-2"
+          />
+          <label htmlFor="useVideo">Video</label>
+        </div>
+        <div>
+          <input
+            id="useAudio"
+            type="checkbox"
+            disabled={success}
+            checked={useAudio}
+            onChange={() => setUseAudio(!useAudio)}
+            className="default:ring-2 mr-2"
+          />
+          <label htmlFor="useAudio">Audio</label>
+        </div>
         <button
-          className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500"
-          onClick={() => produce()}
+          className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500 disabled:opacity-50"
+          disabled={success}
+          onClick={() =>
+            produce().then(() => {
+              setSuccess(true);
+            })
+          }
         >
           Produce
         </button>
