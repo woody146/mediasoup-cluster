@@ -10,7 +10,6 @@ class MediasoupConsumerManager {
     routerId: string;
     transportId: string;
     producerId: string;
-    kind: types.MediaKind;
     rtpCapabilities: types.RtpCapabilities;
   }) {
     const router = mediasoupRouterManager.get(data.routerId);
@@ -36,6 +35,9 @@ class MediasoupConsumerManager {
       rtpCapabilities: data.rtpCapabilities,
       paused: true,
     });
+    setTimeout(() => {
+      consumer.resume();
+    }, 2000);
     MediasoupConsumerManager.consumers.push(consumer);
 
     return {

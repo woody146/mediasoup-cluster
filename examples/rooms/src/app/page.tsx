@@ -1,7 +1,7 @@
 'use client';
 import { Device, types } from 'mediasoup-client';
 import { useState } from 'react';
-import { CreateRoom, JoinRoom, Producer } from '../components';
+import { Consumers, CreateRoom, JoinRoom, Producer } from '../components';
 
 export default function Home() {
   const [roomId, setRoomId] = useState<string>();
@@ -20,9 +20,14 @@ export default function Home() {
     <div className="text-center p-8">
       {device && roomId ? (
         <div>
-          <h3 className="my-4">{roomId}</h3>
-          <div className="grid grid-cols-4 gap-4">
+          <h3 className="my-4">
+            <b>Room Id</b> {roomId}
+          </h3>
+          <div className="grid grid-cols-5 gap-4">
+            <div />
             <Producer device={device} roomId={roomId} />
+            <div />
+            <Consumers device={device} roomId={roomId} />
           </div>
         </div>
       ) : (

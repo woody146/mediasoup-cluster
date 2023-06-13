@@ -86,7 +86,7 @@ export class PeerService extends BaseService {
     rtpCapabilities: any;
   }) {
     const peer = await this.get({ peerId: data.peerId });
-    if (peer && peer.type === constants.PRODUCER) {
+    if (peer && peer.type === constants.CONSUMER) {
       const result = await fetchApi({
         host: peer.slave.externalHost,
         port: peer.slave.apiPort,
@@ -95,13 +95,13 @@ export class PeerService extends BaseService {
         data: {
           transportId: peer.id,
           routerId: peer.routerId,
-          kind: data.kind,
           producerId: data.producerId,
           rtpCapabilities: data.rtpCapabilities,
         },
       });
 
       peer.consumerId = result.id;
+      peer.producerId = data.producerId;
       await this.dataSource.getRepository(MediaPeer).save(peer);
       return result;
     }
@@ -139,7 +139,11 @@ export class PeerService extends BaseService {
   async getProducers(data: { roomId: string }) {
     return this.dataSource.getRepository(MediaPeer).find({
       select: ['id', 'producerId'],
-      where: { roomId: data.roomId, producerId: Not(IsNull()) },
+      where: {
+        roomId: data.roomId,
+        producerId: Not(IsNull()),
+        type: constants.PRODUCER,
+      },
     });
   }
 }
