@@ -129,6 +129,23 @@ export class PeerService extends BaseService {
     throw new ServiceError(404, 'Peer not found');
   }
 
+  async resume(data: { peerId: string }) {
+    const peer = await this.get({ peerId: data.peerId });
+    if (peer && peer.consumerId && peer.type === constants.CONSUMER) {
+      const result = await fetchApi({
+        host: peer.slave.externalHost,
+        port: peer.slave.apiPort,
+        path: '/consumers/:consumerId/resume',
+        method: 'POST',
+        data: {
+          consumerId: peer.consumerId,
+        },
+      });
+      return result;
+    }
+    throw new ServiceError(404, 'Peer not found');
+  }
+
   async get(data: { peerId: string }) {
     return this.dataSource.getRepository(MediaPeer).findOne({
       relations: { slave: true },
