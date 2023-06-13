@@ -5,7 +5,6 @@ import { BaseService } from './base.js';
 export class SlaveService extends BaseService {
   async add(data: {
     internalHost: string;
-    externalHost: string;
     for: string; // consumer | producer
     apiPort: number;
     maxPeer?: number;
@@ -20,10 +19,7 @@ export class SlaveService extends BaseService {
       .insert()
       .into(MediaSlave)
       .values([{ ...data, peerCount: 0 }])
-      .orUpdate(
-        ['externalHost', 'for', 'maxPeer', 'peerCount'],
-        ['internalHost', 'apiPort']
-      )
+      .orUpdate(['for', 'maxPeer', 'peerCount'], ['internalHost', 'apiPort'])
       .execute();
     return {};
   }
@@ -53,7 +49,6 @@ export class SlaveService extends BaseService {
   addFromEnv() {
     return this.add({
       internalHost: process.env.SLAVE_INTERNAL_HOST || 'localhost',
-      externalHost: process.env.SLAVE_EXTERNAL_HOST || 'localhost',
       for: process.env.SLAVE_FOR || constants.CONSUMER,
       apiPort: Number(process.env.PORT || 80),
       maxPeer: Number(process.env.SLAVE_MAX_PEER),

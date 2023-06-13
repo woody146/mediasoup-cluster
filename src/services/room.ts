@@ -9,7 +9,7 @@ export class RoomService extends BaseService {
     const slave = await this.createService(SlaveService).getForNewRoom();
     if (slave) {
       const result = await fetchApi({
-        host: slave.externalHost,
+        host: slave.internalHost,
         port: slave.apiPort,
         path: '/routers',
         method: 'POST',
@@ -35,7 +35,7 @@ export class RoomService extends BaseService {
     const room = await this.get(data);
     if (room) {
       const result = await fetchApi({
-        host: room.slave.externalHost,
+        host: room.slave.internalHost,
         port: room.slave.apiPort,
         path: '/routers/:routerId',
         method: 'GET',
