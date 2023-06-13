@@ -6,7 +6,7 @@
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:master": "PORT=3000 node dist/run_master.js",
-    "start:slave": "PORT=3002 node dist/run_slave.js",
+    "start:slave": "PORT=3010 node dist/run_slave.js",
     "dev": "npm run start:master",
     "prepare": "husky install"
   },

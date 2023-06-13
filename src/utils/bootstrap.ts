@@ -9,7 +9,9 @@ export interface RouteConfig {
 }
 
 export async function startServer(routers: RouteConfig[]) {
-  const server = Fastify({});
+  const server = Fastify({
+    logger: true,
+  });
   dotenv.config();
 
   try {
