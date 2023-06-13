@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { MediaRoom } from './media.room.js';
 import { MediaPeer } from './media.peer.js';
+import { MediaRouter } from './media.router.js';
 
 @Entity()
 @Index(['internalHost', 'apiPort'], { unique: true })
@@ -34,5 +35,8 @@ export class MediaSlave extends BaseEntity {
   rooms!: MediaRoom[];
 
   @OneToMany(() => MediaPeer, (peer) => peer.slave)
-  peers!: MediaRoom[];
+  peers!: MediaPeer[];
+
+  @OneToMany(() => MediaRouter, (router) => router.slave)
+  routers!: MediaRouter[];
 }
