@@ -16,8 +16,8 @@ class MediasoupRouterManager {
     };
   }
 
-  getRtpCapabilities(id: string) {
-    const router = this.get(id);
+  getRtpCapabilities(data: { routerId: string }) {
+    const router = this.get(data.routerId);
     if (router) {
       return { rtpCapabilities: router.rtpCapabilities };
     }
