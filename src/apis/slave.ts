@@ -19,7 +19,7 @@ export default [
     method: 'GET',
     url: '/routers/:routerId',
     handler: (data) => {
-      return mediasoupRouterManager.getRtpCapabilities(data.routerId);
+      return mediasoupRouterManager.getRtpCapabilities(data);
     },
   },
   {

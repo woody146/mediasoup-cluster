@@ -1,11 +1,20 @@
 'use client';
 import { Device, types } from 'mediasoup-client';
 import { useState } from 'react';
-import { CreateRoom, Producer } from '../components';
+import { CreateRoom, JoinRoom, Producer } from '../components';
 
 export default function Home() {
   const [roomId, setRoomId] = useState<string>();
   const [device, setDevice] = useState<types.Device>();
+
+  const updateDevice = async (data: any) => {
+    const newDevice = new Device();
+    await newDevice.load({
+      routerRtpCapabilities: data.rtpCapabilities,
+    });
+    setDevice(newDevice);
+    setRoomId(data.id);
+  };
 
   return (
     <div className="text-center p-8">
@@ -17,16 +26,10 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <CreateRoom
-          onSuccess={async (data) => {
-            const newDevice = new Device();
-            await newDevice.load({
-              routerRtpCapabilities: data.rtpCapabilities,
-            });
-            setDevice(newDevice);
-            setRoomId(data.id);
-          }}
-        />
+        <div className="flex justify-center space-x-8">
+          <CreateRoom onSuccess={updateDevice} />
+          <JoinRoom onSuccess={updateDevice} />
+        </div>
       )}
     </div>
   );
