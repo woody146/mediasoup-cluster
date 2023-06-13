@@ -31,7 +31,7 @@ export class RoomService extends BaseService {
     });
   }
 
-  async getRtpCapabilities(data: { roomId: string }) {
+  async getCapabilities(data: { roomId: string }) {
     const room = await this.get(data);
     if (room) {
       const result = await fetchApi({
@@ -41,7 +41,7 @@ export class RoomService extends BaseService {
         method: 'GET',
         data: { routerId: room.routerId },
       });
-      return result;
+      return { ...result, id: data.roomId };
     }
     throw new ServiceError(404, 'Room not found');
   }

@@ -10,6 +10,13 @@ export default [
     },
   },
   {
+    method: 'GET',
+    url: '/rooms/:roomId',
+    handler: (data) => {
+      return new RoomService(getDataSource()).getCapabilities(data);
+    },
+  },
+  {
     method: 'POST',
     url: '/rooms/:roomId/producer_peers',
     handler: (data) => {
