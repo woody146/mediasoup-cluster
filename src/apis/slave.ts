@@ -64,4 +64,11 @@ export default [
       return mediasoupConsumerManager.create(data);
     },
   },
+  {
+    method: 'POST',
+    url: '/consumers/:consumerId/resume',
+    handler: (data) => {
+      return mediasoupConsumerManager.resume(data);
+    },
+  },
 ] as RouteConfig[];

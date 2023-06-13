@@ -46,6 +46,13 @@ export default [
   },
   {
     method: 'POST',
+    url: '/peers/:peerId/resume',
+    handler: (data) => {
+      return new PeerService(getDataSource()).resume(data);
+    },
+  },
+  {
+    method: 'POST',
     url: '/peers/:peerId/produce',
     handler: (data) => {
       return new PeerService(getDataSource()).produce(data);

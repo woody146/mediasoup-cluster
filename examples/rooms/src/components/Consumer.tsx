@@ -66,6 +66,10 @@ export function Consumer({
           case 'connected':
             if (ref.current) {
               ref.current.srcObject = await stream;
+              fetchApi({
+                path: `/api/peers/${data.id}/resume`,
+                method: 'POST',
+              });
             }
             setLog('subscribed');
             break;
