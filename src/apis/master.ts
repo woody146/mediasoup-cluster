@@ -1,4 +1,4 @@
-import { PeerService, RoomService } from '../services/index.js';
+import { PeerService, RoomService, RouterService } from '../services/index.js';
 import { RouteConfig, getDataSource } from '../utils/index.js';
 
 export default [
@@ -14,6 +14,13 @@ export default [
     url: '/rooms/:roomId',
     handler: (data) => {
       return new RoomService(getDataSource()).getCapabilities(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/rooms/:roomId/join',
+    handler: (data) => {
+      return new RouterService(getDataSource()).getOrCreate(data);
     },
   },
   {
