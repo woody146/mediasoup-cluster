@@ -1,3 +1,5 @@
+import { IsNull, Not } from 'typeorm';
+
 import { constants } from '../constants.js';
 import { MediaPeer } from '../entities/index.js';
 import { fetchApi } from '../utils/api.js';
@@ -131,6 +133,13 @@ export class PeerService extends BaseService {
     return this.dataSource.getRepository(MediaPeer).findOne({
       relations: { slave: true },
       where: { id: data.peerId },
+    });
+  }
+
+  async getProducers(data: { roomId: string }) {
+    return this.dataSource.getRepository(MediaPeer).find({
+      select: ['id', 'producerId'],
+      where: { roomId: data.roomId, producerId: Not(IsNull()) },
     });
   }
 }

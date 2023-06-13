@@ -17,6 +17,13 @@ export default [
     },
   },
   {
+    method: 'GET',
+    url: '/rooms/:roomId/producer_peers',
+    handler: (data) => {
+      return new PeerService(getDataSource()).getProducers(data);
+    },
+  },
+  {
     method: 'POST',
     url: '/rooms/:roomId/consumer_peers',
     handler: (data) => {

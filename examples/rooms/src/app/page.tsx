@@ -6,11 +6,15 @@ import { CreateRoom, Producer } from '../components';
 export default function Home() {
   const [roomId, setRoomId] = useState<string>();
   const [device, setDevice] = useState<types.Device>();
+
   return (
     <div className="text-center p-8">
       {device && roomId ? (
-        <div className="grid grid-cols-4 gap-4">
-          <Producer device={device} roomId={roomId} />
+        <div>
+          <h3 className="my-4">{roomId}</h3>
+          <div className="grid grid-cols-4 gap-4">
+            <Producer device={device} roomId={roomId} />
+          </div>
         </div>
       ) : (
         <CreateRoom
