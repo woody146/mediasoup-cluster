@@ -5,11 +5,13 @@ import {
   Column,
   ManyToOne,
   PrimaryColumn,
+  Index,
 } from 'typeorm';
 import { MediaSlave } from './media.slave.js';
 import { MediaRoom } from './media.room.js';
 
 @Entity()
+@Index(['slaveId', 'roomId'], { unique: true })
 export class MediaRouter extends BaseEntity {
   @PrimaryColumn('uuid')
   id!: string;
