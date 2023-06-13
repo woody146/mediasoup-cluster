@@ -19,9 +19,6 @@ export class MediaSlave extends BaseEntity {
   internalHost!: string;
 
   @Column('text')
-  externalHost!: string;
-
-  @Column('text')
   for!: string; // consumer | producer
 
   @Column('integer')

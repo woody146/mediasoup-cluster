@@ -13,7 +13,7 @@ export class PeerService extends BaseService {
     });
     if (room) {
       const result = await fetchApi({
-        host: room.slave.externalHost,
+        host: room.slave.internalHost,
         port: room.slave.apiPort,
         path: '/routers/:routerId/producer_transports',
         method: 'POST',
@@ -36,7 +36,7 @@ export class PeerService extends BaseService {
     const peer = await this.get({ peerId: data.peerId });
     if (peer && peer.type === constants.PRODUCER) {
       const result = await fetchApi({
-        host: peer.slave.externalHost,
+        host: peer.slave.internalHost,
         port: peer.slave.apiPort,
         path: '/transports/:transportId/producer',
         method: 'POST',
@@ -60,7 +60,7 @@ export class PeerService extends BaseService {
     });
     if (room) {
       const result = await fetchApi({
-        host: room.slave.externalHost,
+        host: room.slave.internalHost,
         port: room.slave.apiPort,
         path: '/routers/:routerId/consumer_transports',
         method: 'POST',
@@ -88,7 +88,7 @@ export class PeerService extends BaseService {
     const peer = await this.get({ peerId: data.peerId });
     if (peer && peer.type === constants.CONSUMER) {
       const result = await fetchApi({
-        host: peer.slave.externalHost,
+        host: peer.slave.internalHost,
         port: peer.slave.apiPort,
         path: '/transports/:transportId/consumer',
         method: 'POST',
@@ -112,7 +112,7 @@ export class PeerService extends BaseService {
     const peer = await this.get({ peerId: data.peerId });
     if (peer) {
       const result = await fetchApi({
-        host: peer.slave.externalHost,
+        host: peer.slave.internalHost,
         port: peer.slave.apiPort,
         path:
           peer.type === constants.CONSUMER
@@ -133,7 +133,7 @@ export class PeerService extends BaseService {
     const peer = await this.get({ peerId: data.peerId });
     if (peer && peer.consumerId && peer.type === constants.CONSUMER) {
       const result = await fetchApi({
-        host: peer.slave.externalHost,
+        host: peer.slave.internalHost,
         port: peer.slave.apiPort,
         path: '/consumers/:consumerId/resume',
         method: 'POST',
