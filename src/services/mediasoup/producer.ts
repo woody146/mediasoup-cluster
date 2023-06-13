@@ -3,7 +3,7 @@ import { ServiceError } from '../base.js';
 import { mediasoupProducerWebRTCTransportManager } from './webrtc.transport.js';
 
 class MediasoupProducerManager {
-  static producers: Array<types.Producer> = [];
+  static producers = new Map<string, types.Producer>();
 
   async create(data: {
     transportId: string;
@@ -16,7 +16,7 @@ class MediasoupProducerManager {
     if (transport) {
       const { kind, rtpParameters } = data;
       const producer = await transport.produce({ kind, rtpParameters });
-      MediasoupProducerManager.producers.push(producer);
+      MediasoupProducerManager.producers.set(producer.id, producer);
 
       return { id: producer.id };
     }

@@ -1,14 +1,16 @@
 import { types } from 'mediasoup';
 import { ServiceError } from '../base.js';
 import { mediasoupRouterManager } from './router.js';
+import { getDataSource } from '../../utils/datasource.js';
+import { MediaPeer } from '../../entities/index.js';
 
 class MediasoupWebRTCTransportManager {
-  static transports: Array<types.Transport> = [];
+  static transports = new Map<string, types.Transport>();
 
   get(transportId: string) {
     return (
       this.constructor as typeof MediasoupWebRTCTransportManager
-    ).transports.find((item) => item.id === transportId);
+    ).transports.get(transportId);
   }
 
   async connect(data: { transportId: string; dtlsParameters: any }) {
@@ -22,7 +24,7 @@ class MediasoupWebRTCTransportManager {
 }
 
 class MediasoupProducerWebRTCTransportManager extends MediasoupWebRTCTransportManager {
-  static transports: Array<types.Transport> = [];
+  static transports = new Map<string, types.Transport>();
 
   async create(data: { routerId: string }) {
     const router = mediasoupRouterManager.get(data.routerId);
@@ -50,9 +52,20 @@ class MediasoupProducerWebRTCTransportManager extends MediasoupWebRTCTransportMa
           await transport.setMaxIncomingBitrate(maxIncomingBitrate);
         } catch (error) {}
       }
-      (
-        this.constructor as typeof MediasoupProducerWebRTCTransportManager
-      ).transports.push(transport);
+
+      const constructor = this
+        .constructor as typeof MediasoupProducerWebRTCTransportManager;
+      constructor.transports.set(transport.id, transport);
+
+      transport.observer.on('close', () => {
+        constructor.transports.delete(transport.id);
+        getDataSource()
+          .createQueryBuilder(MediaPeer, 'MediaPeer')
+          .delete()
+          .from(MediaPeer)
+          .where('id = :id', { id: transport.id })
+          .execute();
+      });
 
       return {
         id: transport.id,
@@ -66,7 +79,7 @@ class MediasoupProducerWebRTCTransportManager extends MediasoupWebRTCTransportMa
 }
 
 class MediasoupConsumerWebRTCTransportManager extends MediasoupProducerWebRTCTransportManager {
-  static transports: Array<types.Transport> = [];
+  static transports = new Map<string, types.Transport>();
 }
 
 export const mediasoupProducerWebRTCTransportManager =

@@ -4,7 +4,7 @@ import { ServiceError } from '../base.js';
 import { mediasoupRouterManager } from './router.js';
 
 class MediasoupConsumerManager {
-  static consumers: Array<types.Consumer> = [];
+  static consumers = new Map<string, types.Consumer>();
 
   async create(data: {
     routerId: string;
@@ -36,7 +36,7 @@ class MediasoupConsumerManager {
       paused: true,
     });
 
-    MediasoupConsumerManager.consumers.push(consumer);
+    MediasoupConsumerManager.consumers.set(consumer.id, consumer);
 
     return {
       id: consumer.id,
@@ -57,9 +57,7 @@ class MediasoupConsumerManager {
   }
 
   get(data: { consumerId: string }) {
-    return MediasoupConsumerManager.consumers.find(
-      (item) => item.id === data.consumerId
-    );
+    return MediasoupConsumerManager.consumers.get(data.consumerId);
   }
 }
 

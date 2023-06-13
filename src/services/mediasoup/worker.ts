@@ -1,7 +1,7 @@
 import mediasoup, { type types } from 'mediasoup';
 
 class MediasoupWorkerManager {
-  workers: types.Worker[] = [];
+  workers = new Array<types.Worker>();
   currentWorker = 0;
 
   async init() {
