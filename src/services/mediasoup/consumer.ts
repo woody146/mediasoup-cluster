@@ -35,9 +35,7 @@ class MediasoupConsumerManager {
       rtpCapabilities: data.rtpCapabilities,
       paused: true,
     });
-    setTimeout(() => {
-      consumer.resume();
-    }, 2000);
+
     MediasoupConsumerManager.consumers.push(consumer);
 
     return {
@@ -47,6 +45,21 @@ class MediasoupConsumerManager {
       type: consumer.type,
       producerPaused: consumer.producerPaused,
     };
+  }
+
+  resume(data: { consumerId: string }) {
+    const consumer = this.get(data);
+    if (consumer) {
+      consumer.resume();
+      return {};
+    }
+    throw new ServiceError(404, 'Consumer not found');
+  }
+
+  get(data: { consumerId: string }) {
+    return MediasoupConsumerManager.consumers.find(
+      (item) => item.id === data.consumerId
+    );
   }
 }
 
