@@ -5,18 +5,17 @@ import { fetchApi } from '../services/api';
 
 export function Consumer({
   device,
-  roomId,
   producerId,
+  transport,
 }: {
   device: types.Device;
-  roomId: string;
   producerId: string;
+  transport: types.Transport;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
-  const [log, setLog] = useState('');
 
   const subscribe = useMemo(() => {
-    async function consume(transport: types.Transport) {
+    return async () => {
       const { rtpCapabilities } = device;
       const { id, kind, rtpParameters } = await fetchApi({
         path: `/api/peers/${transport.id}/consume`,
@@ -32,61 +31,16 @@ export function Consumer({
       });
       const stream = new MediaStream();
       stream.addTrack(consumer.track);
-      return stream;
-    }
 
-    return async () => {
-      const data = await fetchApi({
-        path: `/api/rooms/${roomId}/consumer_peers`,
-        method: 'POST',
-        data: {
-          forceTcp: false,
-          rtpCapabilities: device.rtpCapabilities,
-        },
-      });
-
-      const transport = device.createRecvTransport(data);
-
-      transport.on('connect', ({ dtlsParameters }, callback, errback) => {
+      if (ref.current) {
+        ref.current.srcObject = stream;
         fetchApi({
-          path: `/api/peers/${data.id}/connect`,
+          path: `/api/peers/${transport.id}/resume`,
           method: 'POST',
-          data: { dtlsParameters },
-        })
-          .then(callback)
-          .catch(errback);
-      });
-
-      transport.on('connectionstatechange', async (state) => {
-        switch (state) {
-          case 'connecting':
-            setLog('subscribing...');
-            break;
-
-          case 'connected':
-            if (ref.current) {
-              ref.current.srcObject = await stream;
-              fetchApi({
-                path: `/api/peers/${data.id}/resume`,
-                method: 'POST',
-              });
-            }
-            setLog('subscribed');
-            break;
-
-          case 'failed':
-            transport.close();
-            setLog('failed');
-            break;
-
-          default:
-            break;
-        }
-      });
-
-      const stream = consume(transport);
+        });
+      }
     };
-  }, [device, producerId, roomId]);
+  }, [device, producerId, transport]);
 
   useEffect(() => {
     subscribe();
@@ -95,7 +49,6 @@ export function Consumer({
   return (
     <div className="flex flex-col">
       <video ref={ref} controls autoPlay playsInline></video>
-      <div className="pt-4">{log}</div>
     </div>
   );
 }
@@ -108,19 +61,63 @@ export function Consumers({
   roomId: string;
 }) {
   const [items, setItems] = useState<Array<any>>([]);
+  const [log, setLog] = useState('');
+  const [transport, setTransport] = useState<types.Transport>();
+  const [connected, setConnected] = useState(false);
 
-  const load = useMemo(() => {
-    return () => {
-      fetchApi({
-        path: `/api/rooms/${roomId}/producer_peers`,
-        method: 'GET',
-      }).then((data) => {
-        setItems(data);
+  const load = async () => {
+    const itemsResult = await fetchApi({
+      path: `/api/rooms/${roomId}/producer_peers`,
+      method: 'GET',
+    });
+    setItems(itemsResult);
+
+    if (!transport) {
+      const data = await fetchApi({
+        path: `/api/rooms/${roomId}/consumer_peers`,
+        method: 'POST',
+        data: {
+          forceTcp: false,
+          rtpCapabilities: device.rtpCapabilities,
+        },
       });
-    };
-  }, [roomId]);
+      const newTransport = device.createRecvTransport(data);
+      newTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
+        fetchApi({
+          path: `/api/peers/${data.id}/connect`,
+          method: 'POST',
+          data: { dtlsParameters },
+        })
+          .then(callback)
+          .catch(errback);
+      });
+      newTransport.on('connectionstatechange', async (state) => {
+        switch (state) {
+          case 'connecting':
+            setLog('subscribing...');
+            break;
 
-  useEffect(() => load(), [load]);
+          case 'connected':
+            setLog('subscribed');
+            setConnected(true);
+            break;
+
+          case 'failed':
+            newTransport.close();
+            setLog('failed');
+            break;
+
+          default:
+            break;
+        }
+      });
+      setTransport(newTransport);
+    }
+  };
+
+  useEffect(() => {
+    load();
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -130,15 +127,18 @@ export function Consumers({
       >
         Refresh
       </button>
-      {items.map((item) => (
-        <div key={item.id} className="mt-4">
-          <Consumer
-            device={device}
-            roomId={roomId}
-            producerId={item.producerId}
-          />
-        </div>
-      ))}
+      <div className="pt-4">{log}</div>
+      {transport &&
+        // must init transport with first producer, then it can consume many producers
+        items.slice(0, connected ? items.length : 1).map((item) => (
+          <div key={item.id} className="mt-4">
+            <Consumer
+              device={device}
+              transport={transport}
+              producerId={item.producerId}
+            />
+          </div>
+        ))}
     </div>
   );
 }
