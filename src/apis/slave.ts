@@ -1,6 +1,7 @@
 import {
   mediasoupConsumerManager,
   mediasoupConsumerWebRTCTransportManager,
+  mediasoupPipeTransportManager,
   mediasoupProducerManager,
   mediasoupProducerWebRTCTransportManager,
   mediasoupRouterManager,
@@ -20,6 +21,20 @@ export default [
     url: '/routers/:routerId',
     handler: (data) => {
       return mediasoupRouterManager.getRtpCapabilities(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/routers/:routerId/destination_pipe_transports',
+    handler: (data) => {
+      return mediasoupPipeTransportManager.createDestination(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/routers/:routerId/source_pipe_transports',
+    handler: (data) => {
+      return mediasoupPipeTransportManager.createSource(data);
     },
   },
   {
@@ -48,6 +63,13 @@ export default [
     url: '/consumer_transports/:transportId/connect',
     handler: (data) => {
       return mediasoupConsumerWebRTCTransportManager.connect(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/pipe_transports/:transportId/consume',
+    handler: (data) => {
+      return mediasoupPipeTransportManager.consume(data);
     },
   },
   {
