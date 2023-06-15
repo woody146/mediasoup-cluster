@@ -22,24 +22,26 @@ export class RouterService extends BaseService {
     mediaRouter.slaveId = slave.id;
     Object.assign(mediaRouter, data);
     await this.dataSource.getRepository(MediaRouter).save(mediaRouter);
-    return { result };
+    return result;
   }
 
   checkToPipe(data: { routerId: string; producerId: string }) {
     return this.dataSource.transaction(async (entityManager) => {
       const router = await entityManager.getRepository(MediaRouter).findOne({
         lock: { mode: 'pessimistic_read' },
-        relations: { slave: true },
         where: { id: data.routerId },
       });
       if (router && !router.pipedProducers.includes(data.producerId)) {
         const room = await this.createService(RoomService).get({
           roomId: router.roomId,
         });
+        const slave = await this.createService(SlaveService).get({
+          slaveId: router.slaveId,
+        });
 
         await fetchApi({
-          host: router.slave.internalHost,
-          port: router.slave.apiPort,
+          host: slave.internalHost,
+          port: slave.apiPort,
           path: '/routers/:routerId/destination_pipe_transports',
           method: 'POST',
           data: {
