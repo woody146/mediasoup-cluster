@@ -56,9 +56,11 @@ export function Consumer({
 export function Consumers({
   device,
   roomId,
+  userId,
 }: {
   device: types.Device;
   roomId: string;
+  userId: string;
 }) {
   const [items, setItems] = useState<Array<any>>([]);
   const [log, setLog] = useState('');
@@ -80,10 +82,7 @@ export function Consumers({
       const data = await fetchApi({
         path: `/api/router/${routerData.id}/consumer_peers`,
         method: 'POST',
-        data: {
-          forceTcp: false,
-          rtpCapabilities: device.rtpCapabilities,
-        },
+        data: { userId: userId },
       });
       const newTransport = device.createRecvTransport(data);
       newTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
