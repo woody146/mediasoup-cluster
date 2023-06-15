@@ -1,8 +1,6 @@
 import { types } from 'mediasoup';
 import { ServiceError } from '../base.js';
 import { mediasoupRouterManager } from './router.js';
-import { getDataSource } from '../../utils/datasource.js';
-import { MediaPeer } from '../../entities/index.js';
 
 class MediasoupWebRTCTransportManager {
   static transports = new Map<string, types.Transport>();
@@ -56,16 +54,6 @@ class MediasoupProducerWebRTCTransportManager extends MediasoupWebRTCTransportMa
       const constructor = this
         .constructor as typeof MediasoupProducerWebRTCTransportManager;
       constructor.transports.set(transport.id, transport);
-
-      transport.observer.on('close', () => {
-        constructor.transports.delete(transport.id);
-        getDataSource()
-          .createQueryBuilder(MediaPeer, 'MediaPeer')
-          .delete()
-          .from(MediaPeer)
-          .where('id = :id', { id: transport.id })
-          .execute();
-      });
 
       return {
         id: transport.id,
