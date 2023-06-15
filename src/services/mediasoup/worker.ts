@@ -1,8 +1,8 @@
 import mediasoup, { type types } from 'mediasoup';
+import { ServiceError } from '../base.js';
 
 class MediasoupWorkerManager {
   workers = new Array<types.Worker>();
-  currentWorker = 0;
 
   async init() {
     const numWorkers = Number(process.env.MEDIASOUP_NUMBER_OF_WORKERS || '1');
@@ -23,13 +23,12 @@ class MediasoupWorkerManager {
     }
   }
 
-  getWorker() {
-    const result = this.workers[this.currentWorker];
-    this.currentWorker += 1;
-    if (this.currentWorker === this.workers.length) {
-      this.currentWorker = 0;
+  get(pid: number) {
+    const worker = this.workers.find((worker) => worker.pid === pid);
+    if (worker) {
+      return worker;
     }
-    return result;
+    throw new ServiceError(404, 'Worker not found');
   }
 }
 

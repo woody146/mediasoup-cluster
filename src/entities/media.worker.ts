@@ -1,20 +1,20 @@
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   BaseEntity,
   Index,
   OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 import { MediaRoom } from './media.room.js';
 import { MediaPeer } from './media.peer.js';
 import { MediaRouter } from './media.router.js';
 
 @Entity()
-@Index(['internalHost', 'apiPort'], { unique: true })
-export class MediaSlave extends BaseEntity {
-  @PrimaryGeneratedColumn('increment')
-  id!: number;
+@Index(['internalHost', 'apiPort', 'pid'], { unique: true })
+export class MediaWorker extends BaseEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
 
   @Column('text')
   internalHost!: string;
@@ -25,18 +25,21 @@ export class MediaSlave extends BaseEntity {
   @Column('integer')
   apiPort!: number;
 
+  @Column('integer')
+  pid!: number;
+
   @Column('integer', { default: 1e9 })
   maxPeer!: number;
 
   @Column('integer', { default: 0 })
   peerCount!: number;
 
-  @OneToMany(() => MediaRoom, (room) => room.slave)
+  @OneToMany(() => MediaRoom, (room) => room.worker)
   rooms!: MediaRoom[];
 
-  @OneToMany(() => MediaPeer, (peer) => peer.slave)
+  @OneToMany(() => MediaPeer, (peer) => peer.worker)
   peers!: MediaPeer[];
 
-  @OneToMany(() => MediaRouter, (router) => router.slave)
+  @OneToMany(() => MediaRouter, (router) => router.worker)
   routers!: MediaRouter[];
 }

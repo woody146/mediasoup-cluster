@@ -5,8 +5,8 @@ import { ServiceError } from '../base.js';
 class MediasoupRouterManager {
   static routers = new Map<string, types.Router>();
 
-  async create() {
-    const worker = mediasoupWorkerManager.getWorker();
+  async create(data: { pid: number }) {
+    const worker = mediasoupWorkerManager.get(data.pid);
     const mediaCodecs = JSON.parse(process.env.MEDIASOUP_MEDIA_CODECS || '{}');
     const router = await worker.createRouter({ mediaCodecs });
     MediasoupRouterManager.routers.set(router.id, router);
