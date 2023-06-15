@@ -1,6 +1,6 @@
 import { constants } from '../constants.js';
 import { MediaSlave } from '../entities/index.js';
-import { BaseService } from './base.js';
+import { BaseService, ServiceError } from './base.js';
 
 export class SlaveService extends BaseService {
   async add(data: {
@@ -55,13 +55,17 @@ export class SlaveService extends BaseService {
     });
   }
 
-  getFor(type: string) {
-    return this.dataSource
+  async getFor(type: string) {
+    const slave = await this.dataSource
       .createQueryBuilder()
       .select('slave')
       .from(MediaSlave, 'slave')
       .where('slave.for = :for', { for: type })
       .andWhere('slave.peerCount < slave.maxPeer')
       .getOne();
+    if (slave) {
+      return slave;
+    }
+    throw new ServiceError(404, 'Slave not found');
   }
 }

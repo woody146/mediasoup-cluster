@@ -30,6 +30,9 @@ export class MediaRouter extends BaseEntity {
   @ManyToOne(() => MediaRoom, (room) => room.routers, { onDelete: 'CASCADE' })
   room!: MediaRoom;
 
+  @Column('uuid', { array: true, nullable: true, default: [] })
+  pipedProducers!: Array<string>;
+
   @Column('text')
   sourceRouterId!: string;
 
