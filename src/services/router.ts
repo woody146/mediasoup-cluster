@@ -6,7 +6,7 @@ import { RoomService } from './room.js';
 import { SlaveService } from './slave.js';
 
 export class RouterService extends BaseService {
-  async create(data: { roomId: string }) {
+  async createForRoom(data: { roomId: string }) {
     const slave = await this.createService(SlaveService).getFor(
       constants.CONSUMER
     );
@@ -23,6 +23,26 @@ export class RouterService extends BaseService {
     Object.assign(mediaRouter, data);
     await this.dataSource.getRepository(MediaRouter).save(mediaRouter);
     return result;
+  }
+
+  async getForRoom(data: { roomId: string }) {
+    const router = await this.dataSource
+      .createQueryBuilder(MediaRouter, 'router')
+      .leftJoinAndSelect('router.slave', 'slave')
+      .where('router.roomId = :roomId', { roomId: data.roomId })
+      .andWhere('slave.peerCount < slave.maxPeer')
+      .getOne();
+    if (router) {
+      const result = await fetchApi({
+        host: router.slave.internalHost,
+        port: router.slave.apiPort,
+        path: '/routers/:routerId',
+        method: 'GET',
+        data: { routerId: router.id },
+      });
+      return { ...result, id: router.id };
+    }
+    return null;
   }
 
   checkToPipe(data: { routerId: string; producerId: string }) {
@@ -59,26 +79,6 @@ export class RouterService extends BaseService {
     });
   }
 
-  async getForRoom(data: { roomId: string }) {
-    const router = await this.dataSource
-      .createQueryBuilder(MediaRouter, 'router')
-      .leftJoinAndSelect('router.slave', 'slave')
-      .where('router.roomId = :roomId', { roomId: data.roomId })
-      .andWhere('slave.peerCount < slave.maxPeer')
-      .getOne();
-    if (router) {
-      const result = await fetchApi({
-        host: router.slave.internalHost,
-        port: router.slave.apiPort,
-        path: '/routers/:routerId',
-        method: 'GET',
-        data: { routerId: router.id },
-      });
-      return { ...result, id: data.roomId };
-    }
-    return null;
-  }
-
   async get(data: { routerId: string }) {
     const router = await this.dataSource.getRepository(MediaRouter).findOne({
       relations: { slave: true },
@@ -95,6 +95,6 @@ export class RouterService extends BaseService {
     if (result) {
       return result;
     }
-    return this.create(data);
+    return this.createForRoom(data);
   }
 }
