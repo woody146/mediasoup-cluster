@@ -24,6 +24,7 @@ export class MediaRoom extends BaseEntity {
   })
   slave!: MediaSlave;
 
+  // router to produce
   @Column('text')
   routerId!: string;
 

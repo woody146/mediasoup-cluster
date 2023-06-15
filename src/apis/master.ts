@@ -18,7 +18,7 @@ export default [
   },
   {
     method: 'POST',
-    url: '/rooms/:roomId/join',
+    url: '/rooms/:roomId/consumer_routers',
     handler: (data) => {
       return new RouterService(getDataSource()).getOrCreate(data);
     },
@@ -40,6 +40,13 @@ export default [
   {
     method: 'POST',
     url: '/rooms/:roomId/consumer_peers',
+    handler: (data) => {
+      return new PeerService(getDataSource()).createSameHostConsumer(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/router/:routerId/consumer_peers',
     handler: (data) => {
       return new PeerService(getDataSource()).createConsumer(data);
     },

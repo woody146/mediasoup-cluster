@@ -5,9 +5,10 @@
   "scripts": {
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:master": "PORT=3000 node dist/run_master.js",
-    "start:slave": "PORT=3010 node dist/run_slave.js",
-    "dev": "npm run start:slave",
+    "start:master": "cross-env PORT=3000 node dist/run_master.js",
+    "start:slave:producer": "cross-env PORT=3010 SLAVE_FOR=producer node dist/run_slave.js",
+    "start:slave:consumer": "cross-env PORT=3011 SLAVE_FOR=consumer node dist/run_slave.js",
+    "dev": "npm run start:slave:producer",
     "prepare": "husky install"
   },
   "repository": {
@@ -27,6 +28,7 @@
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "^5.59.9",
     "@typescript-eslint/parser": "^5.59.9",
+    "cross-env": "^7.0.3",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",

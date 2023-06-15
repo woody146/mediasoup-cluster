@@ -73,8 +73,12 @@ export function Consumers({
     setItems(itemsResult);
 
     if (!transport) {
+      const routerData = await fetchApi({
+        path: `/api/rooms/${roomId}/consumer_routers`,
+        method: 'POST',
+      });
       const data = await fetchApi({
-        path: `/api/rooms/${roomId}/consumer_peers`,
+        path: `/api/router/${routerData.id}/consumer_peers`,
         method: 'POST',
         data: {
           forceTcp: false,

@@ -33,9 +33,6 @@ export class MediaRouter extends BaseEntity {
   @Column('uuid', { array: true, nullable: true, default: [] })
   pipedProducers!: Array<string>;
 
-  @Column('text')
-  sourceRouterId!: string;
-
   @Column({ type: 'jsonb', nullable: true })
   metadata?: any;
 
