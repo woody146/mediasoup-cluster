@@ -8,7 +8,11 @@ import { RoomService } from './room.js';
 import { RouterService } from './router.js';
 
 export class PeerService extends BaseService {
-  async createProducer(data: { roomId: string; metadata?: any }) {
+  async createProducer(data: {
+    roomId: string;
+    userId?: string;
+    metadata?: any;
+  }) {
     const room = await this.createService(RoomService).get({
       roomId: data.roomId,
     });
@@ -25,6 +29,7 @@ export class PeerService extends BaseService {
     mediaPeer.slaveId = room.slave.id;
     mediaPeer.type = constants.PRODUCER;
     mediaPeer.roomId = room.id;
+    mediaPeer.userId = data.userId;
 
     await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
     this.dataSource
@@ -54,7 +59,7 @@ export class PeerService extends BaseService {
     }
   }
 
-  async createConsumer(data: { routerId: string }) {
+  async createConsumer(data: { routerId: string; userId?: string }) {
     const router = await this.createService(RouterService).get({
       routerId: data.routerId,
     });
@@ -71,6 +76,7 @@ export class PeerService extends BaseService {
     mediaPeer.slaveId = router.slave.id;
     mediaPeer.type = constants.CONSUMER;
     mediaPeer.roomId = router.roomId;
+    mediaPeer.userId = data.userId;
 
     await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
     this.dataSource
@@ -80,7 +86,11 @@ export class PeerService extends BaseService {
   }
 
   // create consumer same host with producer
-  async createSameHostConsumer(data: { roomId: string; metadata?: any }) {
+  async createSameHostConsumer(data: {
+    roomId: string;
+    userId?: string;
+    metadata?: any;
+  }) {
     const room = await this.createService(RoomService).get({
       roomId: data.roomId,
     });
@@ -97,6 +107,7 @@ export class PeerService extends BaseService {
     mediaPeer.slaveId = room.slave.id;
     mediaPeer.type = constants.CONSUMER;
     mediaPeer.roomId = room.id;
+    mediaPeer.userId = data.userId;
 
     await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
     this.dataSource

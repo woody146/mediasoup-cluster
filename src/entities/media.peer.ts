@@ -5,6 +5,7 @@ import {
   Column,
   PrimaryColumn,
   ManyToOne,
+  Index,
 } from 'typeorm';
 import { MediaSlave } from './media.slave.js';
 import { MediaRoom } from './media.room.js';
@@ -28,13 +29,17 @@ export class MediaPeer extends BaseEntity {
   @ManyToOne(() => MediaRoom, (room) => room.peers, { onDelete: 'CASCADE' })
   room!: MediaRoom;
 
-  @Column('text')
+  @Column('uuid')
   routerId!: string;
 
+  @Index()
   @Column('text', { nullable: true })
+  userId?: string;
+
+  @Column('uuid', { nullable: true })
   producerId?: string;
 
-  @Column('text', { nullable: true })
+  @Column('uuid', { nullable: true })
   consumerId?: string;
 
   @Column('text')
