@@ -3,23 +3,24 @@ import { MediaRouter } from '../entities/index.js';
 import { fetchApi } from '../utils/api.js';
 import { BaseService, ServiceError } from './base.js';
 import { RoomService } from './room.js';
-import { SlaveService } from './slave.js';
+import { WorkerService } from './worker.js';
 
 export class RouterService extends BaseService {
   async createForRoom(data: { roomId: string }) {
-    const slave = await this.createService(SlaveService).getFor(
+    const worker = await this.createService(WorkerService).getFor(
       constants.CONSUMER
     );
     const result = await fetchApi({
-      host: slave.internalHost,
-      port: slave.apiPort,
+      host: worker.internalHost,
+      port: worker.apiPort,
       path: '/routers',
       method: 'POST',
+      data: { pid: worker.pid },
     });
 
     const mediaRouter = new MediaRouter();
     mediaRouter.id = result.id;
-    mediaRouter.slaveId = slave.id;
+    mediaRouter.workerId = worker.id;
     Object.assign(mediaRouter, data);
     await this.dataSource.getRepository(MediaRouter).save(mediaRouter);
     return result;
@@ -28,14 +29,14 @@ export class RouterService extends BaseService {
   async getForRoom(data: { roomId: string }) {
     const router = await this.dataSource
       .createQueryBuilder(MediaRouter, 'router')
-      .leftJoinAndSelect('router.slave', 'slave')
+      .leftJoinAndSelect('router.worker', 'worker')
       .where('router.roomId = :roomId', { roomId: data.roomId })
-      .andWhere('slave.peerCount < slave.maxPeer')
+      .andWhere('worker.peerCount < worker.maxPeer')
       .getOne();
     if (router) {
       const result = await fetchApi({
-        host: router.slave.internalHost,
-        port: router.slave.apiPort,
+        host: router.worker.internalHost,
+        port: router.worker.apiPort,
         path: '/routers/:routerId',
         method: 'GET',
         data: { routerId: router.id },
@@ -55,19 +56,19 @@ export class RouterService extends BaseService {
         const room = await this.createService(RoomService).get({
           roomId: router.roomId,
         });
-        const slave = await this.createService(SlaveService).get({
-          slaveId: router.slaveId,
+        const worker = await this.createService(WorkerService).get({
+          workerId: router.workerId,
         });
 
         await fetchApi({
-          host: slave.internalHost,
-          port: slave.apiPort,
+          host: worker.internalHost,
+          port: worker.apiPort,
           path: '/routers/:routerId/destination_pipe_transports',
           method: 'POST',
           data: {
             routerId: data.routerId,
-            sourceHost: room.slave.internalHost,
-            sourcePort: room.slave.apiPort,
+            sourceHost: room.worker.internalHost,
+            sourcePort: room.worker.apiPort,
             sourceRouterId: room.routerId,
             sourceProducerId: data.producerId,
           },
@@ -81,7 +82,7 @@ export class RouterService extends BaseService {
 
   async get(data: { routerId: string }) {
     const router = await this.dataSource.getRepository(MediaRouter).findOne({
-      relations: { slave: true },
+      relations: { worker: true },
       where: { id: data.routerId },
     });
     if (router) {

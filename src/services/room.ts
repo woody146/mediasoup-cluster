@@ -2,23 +2,24 @@ import { constants } from '../constants.js';
 import { MediaRoom } from '../entities/index.js';
 import { fetchApi } from '../utils/index.js';
 import { ServiceError, BaseService } from './base.js';
-import { SlaveService } from './slave.js';
+import { WorkerService } from './worker.js';
 
 export class RoomService extends BaseService {
   async create(data: { metadata?: any }) {
-    const slave = await this.createService(SlaveService).getFor(
+    const worker = await this.createService(WorkerService).getFor(
       constants.PRODUCER
     );
-    if (slave) {
+    if (worker) {
       const result = await fetchApi({
-        host: slave.internalHost,
-        port: slave.apiPort,
+        host: worker.internalHost,
+        port: worker.apiPort,
         path: '/routers',
         method: 'POST',
+        data: { pid: worker.pid },
       });
       const mediaRoom = new MediaRoom();
       mediaRoom.routerId = result.id;
-      mediaRoom.slaveId = slave.id;
+      mediaRoom.workerId = worker.id;
       Object.assign(mediaRoom, data);
       await this.dataSource.getRepository(MediaRoom).save(mediaRoom);
       return { ...result, id: mediaRoom.id };
@@ -27,7 +28,7 @@ export class RoomService extends BaseService {
 
   async get(data: { roomId: string }) {
     const room = await this.dataSource.getRepository(MediaRoom).findOne({
-      relations: { slave: true },
+      relations: { worker: true },
       where: { id: data.roomId },
     });
     if (room) {
@@ -39,8 +40,8 @@ export class RoomService extends BaseService {
   async getCapabilities(data: { roomId: string }) {
     const room = await this.get(data);
     const result = await fetchApi({
-      host: room.slave.internalHost,
-      port: room.slave.apiPort,
+      host: room.worker.internalHost,
+      port: room.worker.apiPort,
       path: '/routers/:routerId',
       method: 'GET',
       data: { routerId: room.routerId },

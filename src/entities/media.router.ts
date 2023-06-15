@@ -7,22 +7,22 @@ import {
   PrimaryColumn,
   Index,
 } from 'typeorm';
-import { MediaSlave } from './media.slave.js';
+import { MediaWorker } from './media.worker.js';
 import { MediaRoom } from './media.room.js';
 
 @Entity()
-@Index(['slaveId', 'roomId'], { unique: true })
+@Index(['workerId', 'roomId'], { unique: true })
 export class MediaRouter extends BaseEntity {
   @PrimaryColumn('uuid')
   id!: string;
 
-  @Column('integer')
-  slaveId!: number;
+  @Column('uuid')
+  workerId!: string;
 
-  @ManyToOne(() => MediaSlave, (slave) => slave.routers, {
+  @ManyToOne(() => MediaWorker, (worker) => worker.routers, {
     onDelete: 'CASCADE',
   })
-  slave!: MediaSlave;
+  worker!: MediaWorker;
 
   @Column('uuid')
   roomId!: string;
