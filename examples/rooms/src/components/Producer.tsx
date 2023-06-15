@@ -5,9 +5,11 @@ import { useRef, useState } from 'react';
 export function Producer({
   device,
   roomId,
+  userId,
 }: {
   device: types.Device;
   roomId: string;
+  userId: string;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [log, setLog] = useState('');
@@ -21,10 +23,7 @@ export function Producer({
     const data = await fetchApi({
       path: `/api/rooms/${roomId}/producer_peers`,
       method: 'POST',
-      data: {
-        forceTcp: false,
-        rtpCapabilities: device.rtpCapabilities,
-      },
+      data: { userId: userId },
     });
 
     const transport = device.createSendTransport(data);
