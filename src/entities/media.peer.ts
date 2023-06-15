@@ -7,7 +7,7 @@ import {
   ManyToOne,
   Index,
 } from 'typeorm';
-import { MediaSlave } from './media.slave.js';
+import { MediaWorker } from './media.worker.js';
 import { MediaRoom } from './media.room.js';
 
 @Entity()
@@ -15,13 +15,13 @@ export class MediaPeer extends BaseEntity {
   @PrimaryColumn('uuid')
   id!: string;
 
-  @Column('integer')
-  slaveId!: number;
+  @Column('uuid')
+  workerId!: string;
 
-  @ManyToOne(() => MediaSlave, (slave) => slave.peers, {
+  @ManyToOne(() => MediaWorker, (worker) => worker.peers, {
     onDelete: 'CASCADE',
   })
-  slave!: MediaSlave;
+  worker!: MediaWorker;
 
   @Column('uuid')
   roomId!: string;

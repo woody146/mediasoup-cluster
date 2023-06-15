@@ -1,7 +1,7 @@
 import { IsNull, Not } from 'typeorm';
 
 import { constants } from '../constants.js';
-import { MediaPeer, MediaSlave } from '../entities/index.js';
+import { MediaPeer, MediaWorker } from '../entities/index.js';
 import { fetchApi } from '../utils/api.js';
 import { BaseService, ServiceError } from './base.js';
 import { RoomService } from './room.js';
@@ -17,8 +17,8 @@ export class PeerService extends BaseService {
       roomId: data.roomId,
     });
     const result = await fetchApi({
-      host: room.slave.internalHost,
-      port: room.slave.apiPort,
+      host: room.worker.internalHost,
+      port: room.worker.apiPort,
       path: '/routers/:routerId/producer_transports',
       method: 'POST',
       data: { routerId: room.routerId },
@@ -26,15 +26,15 @@ export class PeerService extends BaseService {
     const mediaPeer = new MediaPeer();
     mediaPeer.id = result.id;
     mediaPeer.routerId = room.routerId;
-    mediaPeer.slaveId = room.slave.id;
+    mediaPeer.workerId = room.worker.id;
     mediaPeer.type = constants.PRODUCER;
     mediaPeer.roomId = room.id;
     mediaPeer.userId = data.userId;
 
     await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
     this.dataSource
-      .getRepository(MediaSlave)
-      .increment({ id: room.slaveId }, 'peerCount', 1);
+      .getRepository(MediaWorker)
+      .increment({ id: room.workerId }, 'peerCount', 1);
     return result;
   }
 
@@ -42,8 +42,8 @@ export class PeerService extends BaseService {
     const peer = await this.get({ peerId: data.peerId });
     if (peer.type === constants.PRODUCER) {
       const result = await fetchApi({
-        host: peer.slave.internalHost,
-        port: peer.slave.apiPort,
+        host: peer.worker.internalHost,
+        port: peer.worker.apiPort,
         path: '/transports/:transportId/producer',
         method: 'POST',
         data: {
@@ -64,8 +64,8 @@ export class PeerService extends BaseService {
       routerId: data.routerId,
     });
     const result = await fetchApi({
-      host: router.slave.internalHost,
-      port: router.slave.apiPort,
+      host: router.worker.internalHost,
+      port: router.worker.apiPort,
       path: '/routers/:routerId/consumer_transports',
       method: 'POST',
       data: { routerId: router.id },
@@ -73,15 +73,15 @@ export class PeerService extends BaseService {
     const mediaPeer = new MediaPeer();
     mediaPeer.id = result.id;
     mediaPeer.routerId = router.id;
-    mediaPeer.slaveId = router.slave.id;
+    mediaPeer.workerId = router.worker.id;
     mediaPeer.type = constants.CONSUMER;
     mediaPeer.roomId = router.roomId;
     mediaPeer.userId = data.userId;
 
     await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
     this.dataSource
-      .getRepository(MediaSlave)
-      .increment({ id: router.slaveId }, 'peerCount', 1);
+      .getRepository(MediaWorker)
+      .increment({ id: router.workerId }, 'peerCount', 1);
     return result;
   }
 
@@ -95,8 +95,8 @@ export class PeerService extends BaseService {
       roomId: data.roomId,
     });
     const result = await fetchApi({
-      host: room.slave.internalHost,
-      port: room.slave.apiPort,
+      host: room.worker.internalHost,
+      port: room.worker.apiPort,
       path: '/routers/:routerId/consumer_transports',
       method: 'POST',
       data: { routerId: room.routerId },
@@ -104,15 +104,15 @@ export class PeerService extends BaseService {
     const mediaPeer = new MediaPeer();
     mediaPeer.id = result.id;
     mediaPeer.routerId = room.routerId;
-    mediaPeer.slaveId = room.slave.id;
+    mediaPeer.workerId = room.worker.id;
     mediaPeer.type = constants.CONSUMER;
     mediaPeer.roomId = room.id;
     mediaPeer.userId = data.userId;
 
     await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
     this.dataSource
-      .getRepository(MediaSlave)
-      .increment({ id: room.slaveId }, 'peerCount', 1);
+      .getRepository(MediaWorker)
+      .increment({ id: room.workerId }, 'peerCount', 1);
     return result;
   }
 
@@ -130,8 +130,8 @@ export class PeerService extends BaseService {
       });
 
       const result = await fetchApi({
-        host: peer.slave.internalHost,
-        port: peer.slave.apiPort,
+        host: peer.worker.internalHost,
+        port: peer.worker.apiPort,
         path: '/transports/:transportId/consumer',
         method: 'POST',
         data: {
@@ -153,8 +153,8 @@ export class PeerService extends BaseService {
   async connect(data: { peerId: string; dtlsParameters: any }) {
     const peer = await this.get({ peerId: data.peerId });
     const result = await fetchApi({
-      host: peer.slave.internalHost,
-      port: peer.slave.apiPort,
+      host: peer.worker.internalHost,
+      port: peer.worker.apiPort,
       path:
         peer.type === constants.CONSUMER
           ? `/consumer_transports/:transportId/connect`
@@ -172,8 +172,8 @@ export class PeerService extends BaseService {
     const peer = await this.get({ peerId: data.peerId });
     if (peer.consumerId && peer.type === constants.CONSUMER) {
       const result = await fetchApi({
-        host: peer.slave.internalHost,
-        port: peer.slave.apiPort,
+        host: peer.worker.internalHost,
+        port: peer.worker.apiPort,
         path: '/consumers/:consumerId/resume',
         method: 'POST',
         data: {
@@ -186,7 +186,7 @@ export class PeerService extends BaseService {
 
   async get(data: { peerId: string }) {
     const peer = await this.dataSource.getRepository(MediaPeer).findOne({
-      relations: { slave: true },
+      relations: { worker: true },
       where: { id: data.peerId },
     });
     if (peer) {

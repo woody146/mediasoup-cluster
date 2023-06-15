@@ -12,8 +12,8 @@ export default [
   {
     method: 'POST',
     url: '/routers',
-    handler: () => {
-      return mediasoupRouterManager.create();
+    handler: (data) => {
+      return mediasoupRouterManager.create(data);
     },
   },
   {
