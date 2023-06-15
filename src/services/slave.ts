@@ -55,6 +55,16 @@ export class SlaveService extends BaseService {
     });
   }
 
+  async get(data: { slaveId: number }) {
+    const slave = await this.dataSource.getRepository(MediaSlave).findOne({
+      where: { id: data.slaveId },
+    });
+    if (slave) {
+      return slave;
+    }
+    throw new ServiceError(404, 'Slave not found');
+  }
+
   async getFor(type: string) {
     const slave = await this.dataSource
       .createQueryBuilder()

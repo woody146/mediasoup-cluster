@@ -127,6 +127,7 @@ export class PeerService extends BaseService {
       await this.dataSource.getRepository(MediaPeer).save(peer);
       return result;
     }
+    throw new ServiceError(400, 'Invalid type peer');
   }
 
   async connect(data: { peerId: string; dtlsParameters: any }) {
