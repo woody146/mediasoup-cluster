@@ -1,7 +1,7 @@
 import { IsNull, Not } from 'typeorm';
 
 import { constants } from '../constants.js';
-import { MediaPeer } from '../entities/index.js';
+import { MediaPeer, MediaSlave } from '../entities/index.js';
 import { fetchApi } from '../utils/api.js';
 import { BaseService, ServiceError } from './base.js';
 import { RoomService } from './room.js';
@@ -27,6 +27,9 @@ export class PeerService extends BaseService {
     mediaPeer.roomId = room.id;
 
     await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
+    this.dataSource
+      .getRepository(MediaSlave)
+      .increment({ id: room.slaveId }, 'peerCount', 1);
     return result;
   }
 
@@ -70,6 +73,9 @@ export class PeerService extends BaseService {
     mediaPeer.roomId = router.roomId;
 
     await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
+    this.dataSource
+      .getRepository(MediaSlave)
+      .increment({ id: router.slaveId }, 'peerCount', 1);
     return result;
   }
 
@@ -93,6 +99,9 @@ export class PeerService extends BaseService {
     mediaPeer.roomId = room.id;
 
     await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
+    this.dataSource
+      .getRepository(MediaSlave)
+      .increment({ id: room.slaveId }, 'peerCount', 1);
     return result;
   }
 
