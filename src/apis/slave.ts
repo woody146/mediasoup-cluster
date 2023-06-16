@@ -59,10 +59,24 @@ export default [
     },
   },
   {
+    method: 'DELETE',
+    url: '/producer_transports/:transportId',
+    handler: (data) => {
+      return mediasoupProducerWebRTCTransportManager.close(data);
+    },
+  },
+  {
     method: 'POST',
     url: '/consumer_transports/:transportId/connect',
     handler: (data) => {
       return mediasoupConsumerWebRTCTransportManager.connect(data);
+    },
+  },
+  {
+    method: 'DELETE',
+    url: '/consumer_transports/:transportId',
+    handler: (data) => {
+      return mediasoupConsumerWebRTCTransportManager.close(data);
     },
   },
   {
