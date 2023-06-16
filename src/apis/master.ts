@@ -22,6 +22,13 @@ export default [
     },
   },
   {
+    method: 'DELETE',
+    url: '/rooms/:roomId',
+    handler: (data) => {
+      return new RoomService(getDataSource()).close(data);
+    },
+  },
+  {
     method: 'POST',
     url: '/rooms/:roomId/consumer_routers',
     handler: (data) => {

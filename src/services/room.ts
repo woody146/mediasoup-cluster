@@ -1,5 +1,5 @@
 import { constants } from '../constants.js';
-import { MediaRoom } from '../entities/index.js';
+import { MediaRoom, MediaRouter } from '../entities/index.js';
 import { fetchApi } from '../utils/index.js';
 import { ServiceError, BaseService } from './base.js';
 import { WorkerService } from './worker.js';
@@ -35,6 +35,42 @@ export class RoomService extends BaseService {
       return room;
     }
     throw new ServiceError(404, 'Room not found');
+  }
+
+  async close(data: { roomId: string }) {
+    const room = await this.get(data);
+    await this.closeRouters({ roomId: room.id });
+    try {
+      await fetchApi({
+        host: room.worker.internalHost,
+        port: room.worker.apiPort,
+        path: '/routers/:routerId',
+        method: 'DELETE',
+        data: { routerId: room.routerId },
+      });
+    } catch {}
+    await this.dataSource.getRepository(MediaRoom).remove(room);
+  }
+
+  async closeRouters(data: { roomId: string }) {
+    const routers = await this.dataSource.getRepository(MediaRouter).find({
+      relations: { worker: true },
+      where: { roomId: data.roomId },
+    });
+    await Promise.all(
+      routers.map(async (router) => {
+        try {
+          await fetchApi({
+            host: router.worker.internalHost,
+            port: router.worker.apiPort,
+            path: '/routers/:routerId',
+            method: 'DELETE',
+            data: { routerId: router.id },
+          });
+        } catch {}
+        await this.dataSource.getRepository(MediaRouter).remove(router);
+      })
+    );
   }
 
   async getCapabilities(data: { roomId: string }) {

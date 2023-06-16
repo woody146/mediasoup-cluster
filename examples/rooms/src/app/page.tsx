@@ -32,7 +32,6 @@ export default function Home() {
       {device && roomId ? (
         <div>
           <h3 className="my-4">
-            <b>Room Id</b> {roomId} - <b>User id</b> {user}{' '}
             <ExitRoom
               roomId={roomId}
               userId={user}
@@ -41,6 +40,7 @@ export default function Home() {
                 setRoomId(undefined);
               }}
             />
+            <b className="ml-4">Room Id</b> {roomId} <b>User id</b> {user}
           </h3>
           <div className="grid grid-cols-5 gap-4">
             <div />

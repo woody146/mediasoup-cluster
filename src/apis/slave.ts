@@ -24,6 +24,13 @@ export default [
     },
   },
   {
+    method: 'DELETE',
+    url: '/routers/:routerId',
+    handler: (data) => {
+      return mediasoupRouterManager.close(data);
+    },
+  },
+  {
     method: 'POST',
     url: '/routers/:routerId/destination_pipe_transports',
     handler: (data) => {
