@@ -6,18 +6,24 @@ class MediasoupWebRTCTransportManager {
   static transports = new Map<string, types.Transport>();
 
   get(transportId: string) {
-    return (
+    const transport = (
       this.constructor as typeof MediasoupWebRTCTransportManager
     ).transports.get(transportId);
+    if (transport) {
+      return transport;
+    }
+    throw new ServiceError(404, 'Transport not found');
   }
 
   async connect(data: { transportId: string; dtlsParameters: any }) {
     const transport = this.get(data.transportId);
-    if (transport) {
-      await transport.connect({ dtlsParameters: data.dtlsParameters });
-      return {};
-    }
-    throw new ServiceError(404, 'Transport not found');
+    await transport.connect({ dtlsParameters: data.dtlsParameters });
+    return {};
+  }
+
+  async close(data: { transportId: string }) {
+    const transport = this.get(data.transportId);
+    transport.close();
   }
 }
 
@@ -26,43 +32,39 @@ class MediasoupProducerWebRTCTransportManager extends MediasoupWebRTCTransportMa
 
   async create(data: { routerId: string }) {
     const router = mediasoupRouterManager.get(data.routerId);
-    if (router) {
-      const maxIncomingBitrate = Number(
-        process.env.MEDIASOUP_WEBRTC_TRANSPORT_MAX_INCOMING_BITRATE
-      );
-      const initialAvailableOutgoingBitrate = Number(
-        process.env
-          .MEDIASOUP_WEBRTC_TRANSPORT_INITIAL_AVAILABLE_OUTGOING_BITRATE
-      );
-      const listenIps = JSON.parse(
-        process.env.MEDIASOUP_WEBRTC_TRANSPORT_LISTEN_IPS || '[]'
-      );
+    const maxIncomingBitrate = Number(
+      process.env.MEDIASOUP_WEBRTC_TRANSPORT_MAX_INCOMING_BITRATE
+    );
+    const initialAvailableOutgoingBitrate = Number(
+      process.env.MEDIASOUP_WEBRTC_TRANSPORT_INITIAL_AVAILABLE_OUTGOING_BITRATE
+    );
+    const listenIps = JSON.parse(
+      process.env.MEDIASOUP_WEBRTC_TRANSPORT_LISTEN_IPS || '[]'
+    );
 
-      const transport = await router.createWebRtcTransport({
-        listenIps: listenIps,
-        enableUdp: true,
-        enableTcp: true,
-        preferUdp: true,
-        initialAvailableOutgoingBitrate,
-      });
-      if (maxIncomingBitrate) {
-        try {
-          await transport.setMaxIncomingBitrate(maxIncomingBitrate);
-        } catch (error) {}
-      }
-
-      const constructor = this
-        .constructor as typeof MediasoupProducerWebRTCTransportManager;
-      constructor.transports.set(transport.id, transport);
-
-      return {
-        id: transport.id,
-        iceParameters: transport.iceParameters,
-        iceCandidates: transport.iceCandidates,
-        dtlsParameters: transport.dtlsParameters,
-      };
+    const transport = await router.createWebRtcTransport({
+      listenIps: listenIps,
+      enableUdp: true,
+      enableTcp: true,
+      preferUdp: true,
+      initialAvailableOutgoingBitrate,
+    });
+    if (maxIncomingBitrate) {
+      try {
+        await transport.setMaxIncomingBitrate(maxIncomingBitrate);
+      } catch (error) {}
     }
-    throw new ServiceError(404, 'Router not found');
+
+    const constructor = this
+      .constructor as typeof MediasoupProducerWebRTCTransportManager;
+    constructor.transports.set(transport.id, transport);
+
+    return {
+      id: transport.id,
+      iceParameters: transport.iceParameters,
+      iceCandidates: transport.iceCandidates,
+      dtlsParameters: transport.dtlsParameters,
+    };
   }
 }
 

@@ -13,9 +13,6 @@ class MediasoupConsumerManager {
     rtpCapabilities: types.RtpCapabilities;
   }) {
     const router = mediasoupRouterManager.get(data.routerId);
-    if (!router) {
-      throw new ServiceError(404, 'Router not found');
-    }
     if (
       !router.canConsume({
         producerId: data.producerId,
@@ -27,9 +24,6 @@ class MediasoupConsumerManager {
     const transport = mediasoupConsumerWebRTCTransportManager.get(
       data.transportId
     );
-    if (!transport) {
-      throw new ServiceError(404, 'Transport not found');
-    }
     const consumer = await transport.consume({
       producerId: data.producerId,
       rtpCapabilities: data.rtpCapabilities,
@@ -49,15 +43,16 @@ class MediasoupConsumerManager {
 
   resume(data: { consumerId: string }) {
     const consumer = this.get(data);
-    if (consumer) {
-      consumer.resume();
-      return {};
-    }
-    throw new ServiceError(404, 'Consumer not found');
+    consumer.resume();
+    return {};
   }
 
   get(data: { consumerId: string }) {
-    return MediasoupConsumerManager.consumers.get(data.consumerId);
+    const consumer = MediasoupConsumerManager.consumers.get(data.consumerId);
+    if (consumer) {
+      return consumer;
+    }
+    throw new ServiceError(404, 'Consumer not found');
   }
 }
 

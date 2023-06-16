@@ -18,14 +18,15 @@ class MediasoupRouterManager {
 
   getRtpCapabilities(data: { routerId: string }) {
     const router = this.get(data.routerId);
-    if (router) {
-      return { rtpCapabilities: router.rtpCapabilities };
-    }
-    throw new ServiceError(404, 'Router not found');
+    return { rtpCapabilities: router.rtpCapabilities };
   }
 
   get(id: string) {
-    return MediasoupRouterManager.routers.get(id);
+    const router = MediasoupRouterManager.routers.get(id);
+    if (router) {
+      return router;
+    }
+    throw new ServiceError(404, 'Router not found');
   }
 
   async delete(id: string) {

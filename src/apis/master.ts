@@ -1,4 +1,9 @@
-import { PeerService, RoomService, RouterService } from '../services/index.js';
+import {
+  PeerService,
+  RoomService,
+  RouterService,
+  UserService,
+} from '../services/index.js';
 import { RouteConfig, getDataSource } from '../utils/index.js';
 
 export default [
@@ -77,6 +82,13 @@ export default [
     url: '/peers/:peerId/consume',
     handler: (data) => {
       return new PeerService(getDataSource()).consume(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/user/:userId/logout',
+    handler: (data) => {
+      return new UserService(getDataSource()).logout(data);
     },
   },
 ] as RouteConfig[];

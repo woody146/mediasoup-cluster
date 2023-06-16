@@ -1,5 +1,4 @@
 import { types } from 'mediasoup';
-import { ServiceError } from '../base.js';
 import { mediasoupProducerWebRTCTransportManager } from './webrtc.transport.js';
 
 class MediasoupProducerManager {
@@ -13,14 +12,11 @@ class MediasoupProducerManager {
     const transport = mediasoupProducerWebRTCTransportManager.get(
       data.transportId
     );
-    if (transport) {
-      const { kind, rtpParameters } = data;
-      const producer = await transport.produce({ kind, rtpParameters });
-      MediasoupProducerManager.producers.set(producer.id, producer);
+    const { kind, rtpParameters } = data;
+    const producer = await transport.produce({ kind, rtpParameters });
+    MediasoupProducerManager.producers.set(producer.id, producer);
 
-      return { id: producer.id };
-    }
-    throw new ServiceError(404, 'Transport not found');
+    return { id: producer.id };
   }
 }
 

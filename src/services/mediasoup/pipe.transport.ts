@@ -1,23 +1,20 @@
 import { types } from 'mediasoup';
-import { ServiceError } from '../base.js';
 import { mediasoupRouterManager } from './router.js';
 import { fetchApi } from '../../utils/api.js';
+import { ServiceError } from '../base.js';
 
 class MediasoupPipeTransportManager {
   static transports = new Map<string, types.PipeTransport>();
 
   async create(data: { routerId: string }) {
     const router = mediasoupRouterManager.get(data.routerId);
-    if (router) {
-      const transport = await router.createPipeTransport({
-        listenIp: process.env.SLAVE_INTERNAL_HOST || '127.0.0.1',
-        enableSctp: true,
-        numSctpStreams: { OS: 1024, MIS: 1024 },
-      });
-      MediasoupPipeTransportManager.transports.set(transport.id, transport);
-      return transport;
-    }
-    throw new ServiceError(404, 'Router not found');
+    const transport = await router.createPipeTransport({
+      listenIp: process.env.SLAVE_INTERNAL_HOST || '127.0.0.1',
+      enableSctp: true,
+      numSctpStreams: { OS: 1024, MIS: 1024 },
+    });
+    MediasoupPipeTransportManager.transports.set(transport.id, transport);
+    return transport;
   }
 
   async createDestination(data: {
@@ -85,18 +82,23 @@ class MediasoupPipeTransportManager {
   }
 
   async consume(data: { transportId: string; producerId: string }) {
+    const transport = this.get(data);
+    const pipeConsumer = await transport.consume({
+      producerId: data.producerId,
+    });
+    return {
+      kind: pipeConsumer.kind,
+      rtpParameters: pipeConsumer.rtpParameters,
+      paused: pipeConsumer.producerPaused,
+    };
+  }
+
+  get(data: { transportId: string }) {
     const transport = MediasoupPipeTransportManager.transports.get(
       data.transportId
     );
     if (transport) {
-      const pipeConsumer = await transport.consume({
-        producerId: data.producerId,
-      });
-      return {
-        kind: pipeConsumer.kind,
-        rtpParameters: pipeConsumer.rtpParameters,
-        paused: pipeConsumer.producerPaused,
-      };
+      return transport;
     }
     throw new ServiceError(404, 'Transport not found');
   }
