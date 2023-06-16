@@ -14,22 +14,26 @@ export class UserService extends BaseService {
       relations: { worker: true },
       where: { userId: data.userId, roomId: data.roomId },
     });
-    for (const peer of peers) {
-      try {
-        await fetchApi({
-          host: peer.worker.internalHost,
-          port: peer.worker.apiPort,
-          path:
-            peer.type === constants.CONSUMER
-              ? `/consumer_transports/:transportId`
-              : `/producer_transports/:transportId`,
-          method: 'DELETE',
-          data: { transportId: peer.id },
-        });
+    await Promise.all(
+      peers.map(async (peer) => {
+        try {
+          await fetchApi({
+            host: peer.worker.internalHost,
+            port: peer.worker.apiPort,
+            path:
+              peer.type === constants.CONSUMER
+                ? `/consumer_transports/:transportId`
+                : `/producer_transports/:transportId`,
+            method: 'DELETE',
+            data: { transportId: peer.id },
+          });
+        } catch {}
+        this.dataSource.getRepository(MediaPeer).remove(peer);
         this.dataSource
           .getRepository(MediaWorker)
           .decrement({ id: peer.workerId }, 'peerCount', 1);
-      } catch {}
-    }
+      })
+    );
+    return {};
   }
 }
