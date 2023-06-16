@@ -4,15 +4,6 @@ import { MediaWorker } from '../entities/index.js';
 import { BaseService, ServiceError } from './base.js';
 
 export class WorkerService extends BaseService {
-  getCurrent() {
-    return this.dataSource.getRepository(MediaWorker).findOne({
-      where: {
-        internalHost: process.env.SLAVE_INTERNAL_HOST || 'localhost',
-        apiPort: Number(process.env.PORT || 80),
-      },
-    });
-  }
-
   removeCurrent() {
     return this.dataSource
       .createQueryBuilder(MediaWorker, 'MediaWorker')
