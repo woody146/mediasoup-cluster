@@ -28,8 +28,8 @@ export class UserService extends BaseService {
             data: { transportId: peer.id },
           });
         } catch {}
-        this.dataSource.getRepository(MediaPeer).remove(peer);
-        this.dataSource
+        await this.dataSource.getRepository(MediaPeer).remove(peer);
+        await this.dataSource
           .getRepository(MediaWorker)
           .decrement({ id: peer.workerId }, 'peerCount', 1);
       })
