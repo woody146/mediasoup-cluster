@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import {
   Consumers,
   CreateRoom,
+  DeleteRoom,
   ExitRoom,
   JoinRoom,
   Producer,
@@ -50,9 +51,10 @@ export default function Home() {
           </div>
         </div>
       ) : (
-        <div className="flex justify-center space-x-8">
+        <div className="flex flex-col space-y-8">
           <CreateRoom onSuccess={updateDevice} />
           <JoinRoom onSuccess={updateDevice} />
+          <DeleteRoom />
         </div>
       )}
     </div>

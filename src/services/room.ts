@@ -50,6 +50,7 @@ export class RoomService extends BaseService {
       });
     } catch {}
     await this.dataSource.getRepository(MediaRoom).remove(room);
+    return {};
   }
 
   async closeRouters(data: { roomId: string }) {
