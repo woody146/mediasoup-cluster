@@ -5,7 +5,7 @@ Cluster use PostgreSQL server to save data of slave servers
 ```
                                                            +----------------+
         +-----------------+          webrtc                |  slave server  |
-        | produver client |------------------------------->|  for producer  |
+        | producer client |------------------------------->|  for producer  |
         +-----------------+                                +----------------+
                   |                                             ^      |
                   |                +---------------+            |      |
@@ -87,11 +87,12 @@ npm run dev
       <th >Path</th>
       <th >Request</th>
       <th >Response</th>
-      <th >Description</th>
     </tr>
     <tr>
       <td>POST</td>
-      <td>/rooms</td>
+      <td>
+        /rooms<br />create rooms
+      </td>
       <td></td>
       <td>
        <ul>
@@ -99,11 +100,10 @@ npm run dev
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#router-rtpCapabilities">rtpCapabilities</a></li>
        </ul>
       </td>
-      <td>create rooms</td>
     </tr>
     <tr>
       <td>GET</td>
-      <td>/rooms/:roomId</td>
+      <td>/rooms/:roomId<br />get room information</td>
       <td></td>
       <td>
         <ul>
@@ -111,18 +111,16 @@ npm run dev
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#router-rtpCapabilities">rtpCapabilities</a></li>
        </ul>
       </td>
-      <td>get room information</td>
     </tr>
     <tr>
       <td>DELETE</td>
-      <td>/rooms/:roomId</td>
+      <td>/rooms/:roomId<br />delete the room if no one is in the room</td>
       <td></td>
       <td></td>
-      <td>delete the room if no one is in the room</td>
     </tr>
     <tr>
       <td>POST</td>
-      <td>/rooms/:roomId/producer_peers</td>
+      <td>/rooms/:roomId/producer_peers<br />create producer peer</td>
       <td>
         <ul>
          <li>userId (string): user id</li>
@@ -136,7 +134,6 @@ npm run dev
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportIceParameters">iceParameters</a<</li>
        </ul>
       </td>
-      <td>create producer peer</td>
     </tr>
   </tbody>
 </table>

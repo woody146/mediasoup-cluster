@@ -1,3 +1,4 @@
+import { types } from 'mediasoup';
 import { IsNull, Not } from 'typeorm';
 
 import { constants } from '../constants.js';
@@ -12,7 +13,12 @@ export class PeerService extends BaseService {
     roomId: string;
     userId?: string;
     metadata?: any;
-  }) {
+  }): Promise<{
+    id: string;
+    iceParameters: types.IceParameters;
+    iceCandidates: types.IceCandidate[];
+    dtlsParameters: types.DtlsParameters;
+  }> {
     const room = await this.createService(RoomService).get({
       roomId: data.roomId,
     });
@@ -38,7 +44,16 @@ export class PeerService extends BaseService {
     return result;
   }
 
-  async produce(data: { peerId: string; kind: any; rtpParameters: any }) {
+  async produce(data: {
+    peerId: string;
+    kind: any;
+    rtpParameters: any;
+  }): Promise<{
+    /**
+     * Producer id
+     */
+    id: string;
+  }> {
     const peer = await this.get({ peerId: data.peerId });
     if (peer.type === constants.PRODUCER) {
       const result = await fetchApi({
@@ -57,9 +72,15 @@ export class PeerService extends BaseService {
       await this.dataSource.getRepository(MediaPeer).save(peer);
       return result;
     }
+    throw new ServiceError(400, 'Invalid peer');
   }
 
-  async createConsumer(data: { routerId: string; userId?: string }) {
+  async createConsumer(data: { routerId: string; userId?: string }): Promise<{
+    id: string;
+    iceParameters: types.IceParameters;
+    iceCandidates: types.IceCandidate[];
+    dtlsParameters: types.DtlsParameters;
+  }> {
     const router = await this.createService(RouterService).get({
       routerId: data.routerId,
     });
@@ -90,7 +111,12 @@ export class PeerService extends BaseService {
     roomId: string;
     userId?: string;
     metadata?: any;
-  }) {
+  }): Promise<{
+    id: string;
+    iceParameters: types.IceParameters;
+    iceCandidates: types.IceCandidate[];
+    dtlsParameters: types.DtlsParameters;
+  }> {
     const room = await this.createService(RoomService).get({
       roomId: data.roomId,
     });
@@ -121,7 +147,12 @@ export class PeerService extends BaseService {
     producerId: string;
     kind: any;
     rtpCapabilities: any;
-  }) {
+  }): Promise<{
+    /**
+     * Consumer id
+     */
+    id: string;
+  }> {
     const peer = await this.get({ peerId: data.peerId });
     if (peer.type === constants.CONSUMER) {
       await this.createService(RouterService).checkToPipe({
@@ -152,7 +183,7 @@ export class PeerService extends BaseService {
 
   async connect(data: { peerId: string; dtlsParameters: any }) {
     const peer = await this.get({ peerId: data.peerId });
-    const result = await fetchApi({
+    await fetchApi({
       host: peer.worker.internalHost,
       port: peer.worker.apiPort,
       path:
@@ -165,13 +196,13 @@ export class PeerService extends BaseService {
         dtlsParameters: data.dtlsParameters,
       },
     });
-    return result;
+    return {};
   }
 
   async resume(data: { peerId: string }) {
     const peer = await this.get({ peerId: data.peerId });
     if (peer.consumerId && peer.type === constants.CONSUMER) {
-      const result = await fetchApi({
+      await fetchApi({
         host: peer.worker.internalHost,
         port: peer.worker.apiPort,
         path: '/consumers/:consumerId/resume',
@@ -180,8 +211,9 @@ export class PeerService extends BaseService {
           consumerId: peer.consumerId,
         },
       });
-      return result;
+      return {};
     }
+    throw new ServiceError(400, 'Invalid peer');
   }
 
   async get(data: { peerId: string }) {
@@ -195,7 +227,12 @@ export class PeerService extends BaseService {
     throw new ServiceError(404, 'Peer not found');
   }
 
-  async getProducers(data: { roomId: string }) {
+  async getProducers(data: { roomId: string }): Promise<
+    Array<{
+      id: string;
+      producerId: string;
+    }>
+  > {
     return this.dataSource.getRepository(MediaPeer).find({
       select: ['id', 'producerId'],
       where: {
@@ -203,6 +240,6 @@ export class PeerService extends BaseService {
         producerId: Not(IsNull()),
         type: constants.PRODUCER,
       },
-    });
+    }) as any;
   }
 }
