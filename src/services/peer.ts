@@ -145,7 +145,6 @@ export class PeerService extends BaseService {
   async consume(data: {
     peerId: string;
     producerId: string;
-    kind: any;
     rtpCapabilities: any;
   }): Promise<{
     /**
