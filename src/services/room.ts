@@ -1,3 +1,4 @@
+import { types } from 'mediasoup';
 import { constants } from '../constants.js';
 import { MediaRoom, MediaRouter } from '../entities/index.js';
 import { fetchApi } from '../utils/index.js';
@@ -5,25 +6,26 @@ import { ServiceError, BaseService } from './base.js';
 import { WorkerService } from './worker.js';
 
 export class RoomService extends BaseService {
-  async create(data: { metadata?: any }) {
+  async create(data: { metadata?: any }): Promise<{
+    id: string;
+    rtpCapabilities: types.RtpCapabilities;
+  }> {
     const worker = await this.createService(WorkerService).getFor(
       constants.PRODUCER
     );
-    if (worker) {
-      const result = await fetchApi({
-        host: worker.internalHost,
-        port: worker.apiPort,
-        path: '/routers',
-        method: 'POST',
-        data: { pid: worker.pid },
-      });
-      const mediaRoom = new MediaRoom();
-      mediaRoom.routerId = result.id;
-      mediaRoom.workerId = worker.id;
-      Object.assign(mediaRoom, data);
-      await this.dataSource.getRepository(MediaRoom).save(mediaRoom);
-      return { ...result, id: mediaRoom.id };
-    }
+    const result = await fetchApi({
+      host: worker.internalHost,
+      port: worker.apiPort,
+      path: '/routers',
+      method: 'POST',
+      data: { pid: worker.pid },
+    });
+    const mediaRoom = new MediaRoom();
+    mediaRoom.routerId = result.id;
+    mediaRoom.workerId = worker.id;
+    Object.assign(mediaRoom, data);
+    await this.dataSource.getRepository(MediaRoom).save(mediaRoom);
+    return { ...result, id: mediaRoom.id };
   }
 
   async get(data: { roomId: string }) {
@@ -72,9 +74,13 @@ export class RoomService extends BaseService {
         await this.dataSource.getRepository(MediaRouter).remove(router);
       })
     );
+    return {};
   }
 
-  async getCapabilities(data: { roomId: string }) {
+  async getCapabilities(data: { roomId: string }): Promise<{
+    id: string;
+    rtpCapabilities: types.RtpCapabilities;
+  }> {
     const room = await this.get(data);
     const result = await fetchApi({
       host: room.worker.internalHost,
