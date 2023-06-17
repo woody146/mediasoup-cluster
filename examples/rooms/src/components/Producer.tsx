@@ -44,11 +44,7 @@ export function Producer({
           const { id } = await fetchApi({
             path: `/api/peers/${data.id}/produce`,
             method: 'POST',
-            data: {
-              transportId: transport.id,
-              kind,
-              rtpParameters,
-            },
+            data: { kind, rtpParameters },
           });
           callback({ id });
         } catch (err: any) {
