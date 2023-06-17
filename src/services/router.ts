@@ -1,3 +1,4 @@
+import { types } from 'mediasoup';
 import { constants } from '../constants.js';
 import { MediaRouter } from '../entities/index.js';
 import { fetchApi } from '../utils/api.js';
@@ -6,7 +7,10 @@ import { RoomService } from './room.js';
 import { WorkerService } from './worker.js';
 
 export class RouterService extends BaseService {
-  async createForRoom(data: { roomId: string }) {
+  async createForRoom(data: { roomId: string }): Promise<{
+    id: string;
+    rtpCapabilities: types.RtpCapabilities;
+  }> {
     const worker = await this.createService(WorkerService).getFor(
       constants.CONSUMER
     );
@@ -26,7 +30,10 @@ export class RouterService extends BaseService {
     return result;
   }
 
-  async getForRoom(data: { roomId: string }) {
+  async getForRoom(data: { roomId: string }): Promise<{
+    id: string;
+    rtpCapabilities: types.RtpCapabilities;
+  } | null> {
     const router = await this.dataSource
       .createQueryBuilder(MediaRouter, 'router')
       .leftJoinAndSelect('router.worker', 'worker')
