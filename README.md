@@ -121,7 +121,7 @@ npm run dev
     </tr>
     <tr>
       <td>POST</td>
-      <td>/peers/:peerId/connect_producer<br /><i>make peer connect</i></td>
+      <td>/producer_peers/:peerId/connect<br /><i>make peer connect</i></td>
       <td>
         <ul>
           <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
@@ -131,7 +131,7 @@ npm run dev
     </tr>
     <tr>
       <td>POST</td>
-      <td>/peers/:peerId/produce<br /><i>make peer produce</i></td>
+      <td>/producer_peers/:peerId/produce<br /><i>make peer produce</i></td>
       <td>
         <ul>
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/rtp-parameters-and-capabilities/#MediaKind">kind</a</li>
@@ -210,7 +210,7 @@ npm run dev
     </tr>
     <tr>
       <td>POST</td>
-      <td>/peers/:peerId/connect_consumer<br /><i>make peer connect</i></td>
+      <td>/consumer_peers/:peerId/connect<br /><i>make peer connect</i></td>
       <td>
         <ul>
           <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
@@ -220,7 +220,7 @@ npm run dev
     </tr>
     <tr>
       <td>POST</td>
-      <td>/peers/:peerId/consume<br /><i>make peer consume</i></td>
+      <td>/consumer_peers/:peerId/consume<br /><i>make peer consume</i></td>
       <td>
         <ul>
          <li>producerId: string</li>
@@ -235,7 +235,7 @@ npm run dev
     </tr>
     <tr>
       <td>POST</td>
-      <td>/peers/:peerId/resume<br /><i>make peer resume after connected</i></td>
+      <td>/consumer_peers/:peerId/resume<br /><i>make peer resume after connected</i></td>
       <td></td>
       <td></td>
     </tr>
