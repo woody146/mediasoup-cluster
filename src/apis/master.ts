@@ -65,9 +65,16 @@ export default [
   },
   {
     method: 'POST',
-    url: '/peers/:peerId/connect',
+    url: '/peers/:peerId/connect_producer',
     handler: (data) => {
-      return new PeerService(getDataSource()).connect(data);
+      return new PeerService(getDataSource()).connectProducer(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/peers/:peerId/connect_consumer',
+    handler: (data) => {
+      return new PeerService(getDataSource()).connectConsumer(data);
     },
   },
   {
