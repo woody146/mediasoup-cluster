@@ -29,7 +29,7 @@ export function Producer({
     const transport = device.createSendTransport(data);
     transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
       fetchApi({
-        path: `/api/peers/${data.id}/connect`,
+        path: `/api/producer_peers/${data.id}/connect`,
         method: 'POST',
         data: { dtlsParameters },
       })
@@ -42,7 +42,7 @@ export function Producer({
       async ({ kind, rtpParameters }, callback, errback) => {
         try {
           const { id } = await fetchApi({
-            path: `/api/peers/${data.id}/produce`,
+            path: `/api/producer_peers/${data.id}/produce`,
             method: 'POST',
             data: { kind, rtpParameters },
           });

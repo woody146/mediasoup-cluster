@@ -65,35 +65,35 @@ export default [
   },
   {
     method: 'POST',
-    url: '/peers/:peerId/connect_producer',
+    url: '/producer_peers/:peerId/connect',
     handler: (data) => {
       return new PeerService(getDataSource()).connectProducer(data);
     },
   },
   {
     method: 'POST',
-    url: '/peers/:peerId/connect_consumer',
+    url: '/consumer_peers/:peerId/connect',
     handler: (data) => {
       return new PeerService(getDataSource()).connectConsumer(data);
     },
   },
   {
     method: 'POST',
-    url: '/peers/:peerId/resume',
+    url: '/consumer_peers/:peerId/resume',
     handler: (data) => {
       return new PeerService(getDataSource()).resume(data);
     },
   },
   {
     method: 'POST',
-    url: '/peers/:peerId/produce',
+    url: '/producer_peers/:peerId/produce',
     handler: (data) => {
       return new PeerService(getDataSource()).produce(data);
     },
   },
   {
     method: 'POST',
-    url: '/peers/:peerId/consume',
+    url: '/consumer_peers/:peerId/consume',
     handler: (data) => {
       return new PeerService(getDataSource()).consume(data);
     },
