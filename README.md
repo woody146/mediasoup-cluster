@@ -235,8 +235,12 @@ npm run dev
     </tr>
     <tr>
       <td>POST</td>
-      <td>/consumer_peers/:peerId/resume<br /><i>make peer resume after connected</i></td>
-      <td></td>
+      <td>/consumer_peers/:peerId/resume<br /><i>make consumer resume after connected</i></td>
+      <td>
+        <ul>
+         <li>consumerId: string</li>
+        </ul>
+      </td>
       <td></td>
     </tr>
     <tr>
