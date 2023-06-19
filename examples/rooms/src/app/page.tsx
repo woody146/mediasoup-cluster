@@ -12,6 +12,7 @@ import {
 
 export default function Home() {
   const [roomId, setRoomId] = useState<string>();
+  const [routerId, setRouterId] = useState<string>();
   const [device, setDevice] = useState<types.Device>();
   const [user, setUser] = useState('');
 
@@ -25,12 +26,13 @@ export default function Home() {
       routerRtpCapabilities: data.rtpCapabilities,
     });
     setDevice(newDevice);
-    setRoomId(data.id);
+    setRoomId(data.roomId);
+    setRouterId(data.routerId);
   };
 
   return (
     <div className="text-center p-8">
-      {device && roomId ? (
+      {device && roomId && routerId ? (
         <div>
           <h3 className="my-4">
             <ExitRoom
@@ -47,7 +49,12 @@ export default function Home() {
             <div />
             <Producer device={device} roomId={roomId} userId={user} />
             <div />
-            <Consumers device={device} roomId={roomId} userId={user} />
+            <Consumers
+              device={device}
+              roomId={roomId}
+              routerId={routerId}
+              userId={user}
+            />
           </div>
         </div>
       ) : (
