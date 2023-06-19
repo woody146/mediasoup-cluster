@@ -39,8 +39,8 @@ export class MediaPeer extends BaseEntity {
   @Column('uuid', { nullable: true })
   producerId?: string;
 
-  @Column('uuid', { nullable: true })
-  consumerId?: string;
+  @Column({ type: 'jsonb', default: {} })
+  consumers!: any;
 
   @Column('text')
   type!: string; // consumer | producer

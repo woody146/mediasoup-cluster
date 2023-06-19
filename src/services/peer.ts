@@ -153,7 +153,7 @@ export class PeerService extends BaseService {
     id: string;
   }> {
     const peer = await this.get({ peerId: data.peerId });
-    if (peer.type === constants.CONSUMER) {
+    if (peer.type === constants.CONSUMER && !peer.consumers[data.producerId]) {
       await this.createService(RouterService).checkToPipe({
         routerId: peer.routerId,
         producerId: data.producerId,
@@ -172,8 +172,7 @@ export class PeerService extends BaseService {
         },
       });
 
-      peer.consumerId = result.id;
-      peer.producerId = data.producerId;
+      peer.consumers[data.producerId] = result.id;
       await this.dataSource.getRepository(MediaPeer).save(peer);
       return result;
     }
@@ -216,17 +215,18 @@ export class PeerService extends BaseService {
     throw new ServiceError(400, 'Invalid type peer');
   }
 
-  async resume(data: { peerId: string }) {
+  async resume(data: { peerId: string; consumerId: string }) {
     const peer = await this.get({ peerId: data.peerId });
-    if (peer.consumerId && peer.type === constants.CONSUMER) {
+    if (
+      peer.type === constants.CONSUMER &&
+      Object.values(peer.consumers).includes(data.consumerId)
+    ) {
       await fetchApi({
         host: peer.worker.internalHost,
         port: peer.worker.apiPort,
         path: '/consumers/:consumerId/resume',
         method: 'POST',
-        data: {
-          consumerId: peer.consumerId,
-        },
+        data: { consumerId: data.consumerId },
       });
       return {};
     }
