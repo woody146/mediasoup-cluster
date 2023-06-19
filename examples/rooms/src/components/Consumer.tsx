@@ -37,6 +37,7 @@ export function Consumer({
         fetchApi({
           path: `/api/consumer_peers/${transport.id}/resume`,
           method: 'POST',
+          data: { consumerId: id },
         });
       }
     };
