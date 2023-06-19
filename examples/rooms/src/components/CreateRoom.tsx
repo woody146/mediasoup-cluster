@@ -1,9 +1,10 @@
 import { fetchApi } from '../services';
+import { join } from './JoinRoom';
 
 export function CreateRoom({ onSuccess }: { onSuccess: (data: any) => void }) {
   const createRoom = async () => {
     const data = await fetchApi({ path: '/api/rooms', method: 'POST' });
-    onSuccess(data);
+    join(data.id, onSuccess);
   };
   return (
     <span>
