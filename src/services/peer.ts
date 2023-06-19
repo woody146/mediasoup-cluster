@@ -180,22 +180,40 @@ export class PeerService extends BaseService {
     throw new ServiceError(400, 'Invalid type peer');
   }
 
-  async connect(data: { peerId: string; dtlsParameters: any }) {
+  async connectProducer(data: { peerId: string; dtlsParameters: any }) {
     const peer = await this.get({ peerId: data.peerId });
-    await fetchApi({
-      host: peer.worker.internalHost,
-      port: peer.worker.apiPort,
-      path:
-        peer.type === constants.CONSUMER
-          ? `/consumer_transports/:transportId/connect`
-          : `/producer_transports/:transportId/connect`,
-      method: 'POST',
-      data: {
-        transportId: peer.id,
-        dtlsParameters: data.dtlsParameters,
-      },
-    });
-    return {};
+    if (peer.type === constants.PRODUCER) {
+      await fetchApi({
+        host: peer.worker.internalHost,
+        port: peer.worker.apiPort,
+        path: `/producer_transports/:transportId/connect`,
+        method: 'POST',
+        data: {
+          transportId: peer.id,
+          dtlsParameters: data.dtlsParameters,
+        },
+      });
+      return {};
+    }
+    throw new ServiceError(400, 'Invalid type peer');
+  }
+
+  async connectConsumer(data: { peerId: string; dtlsParameters: any }) {
+    const peer = await this.get({ peerId: data.peerId });
+    if (peer.type === constants.CONSUMER) {
+      await fetchApi({
+        host: peer.worker.internalHost,
+        port: peer.worker.apiPort,
+        path: `/consumer_transports/:transportId/connect`,
+        method: 'POST',
+        data: {
+          transportId: peer.id,
+          dtlsParameters: data.dtlsParameters,
+        },
+      });
+      return {};
+    }
+    throw new ServiceError(400, 'Invalid type peer');
   }
 
   async resume(data: { peerId: string }) {

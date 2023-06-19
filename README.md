@@ -121,6 +121,16 @@ npm run dev
     </tr>
     <tr>
       <td>POST</td>
+      <td>/peers/:peerId/connect_producer<br /><i>make peer connect</i></td>
+      <td>
+        <ul>
+          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
+        </ul>
+      </td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>POST</td>
       <td>/peers/:peerId/produce<br /><i>make peer produce</i></td>
       <td>
         <ul>
@@ -153,6 +163,18 @@ npm run dev
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#router-rtpCapabilities">rtpCapabilities</a></li>
        </ul>
       </td>
+    </tr>    
+    <tr>
+      <td>GET</td>
+      <td>/rooms/:roomId/producer_peers<br /><i>get producer peer list</i></td>
+      <td>
+      </td>
+      <td>
+       <ul>
+         <li>id: peer id</li>
+         <li>producerId: producer id</li>
+       </ul>
+      </td>
     </tr>
     <tr>
       <td>POST</td>
@@ -166,18 +188,6 @@ npm run dev
         <ul>
          <li>id: router id</li>
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#router-rtpCapabilities">rtpCapabilities</a></li>
-       </ul>
-      </td>
-    </tr>
-    <tr>
-      <td>GET</td>
-      <td>/rooms/:roomId/producer_peers<br /><i>get producer peer list</i></td>
-      <td>
-      </td>
-      <td>
-       <ul>
-         <li>id: peer id</li>
-         <li>producerId: producer id</li>
        </ul>
       </td>
     </tr>
@@ -197,6 +207,16 @@ npm run dev
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportIceParameters">iceParameters</a<</li>
        </ul>
       </td>
+    </tr>
+    <tr>
+      <td>POST</td>
+      <td>/peers/:peerId/connect_consumer<br /><i>make peer connect</i></td>
+      <td>
+        <ul>
+          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
+        </ul>
+      </td>
+      <td></td>
     </tr>
     <tr>
       <td>POST</td>
@@ -221,16 +241,6 @@ npm run dev
     </tr>
     <tr>
       <th colspan="4" align="center">For both</th>
-    </tr>
-    <tr>
-      <td>POST</td>
-      <td>/peers/:peerId/connect<br /><i>make peer connect</i></td>
-      <td>
-        <ul>
-          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
-        </ul>
-      </td>
-      <td></td>
     </tr>
     <tr>
       <td>POST</td>
