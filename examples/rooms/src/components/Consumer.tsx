@@ -18,7 +18,7 @@ export function Consumer({
     return async () => {
       const { rtpCapabilities } = device;
       const { id, kind, rtpParameters } = await fetchApi({
-        path: `/api/peers/${transport.id}/consume`,
+        path: `/api/consumer_peers/${transport.id}/consume`,
         method: 'POST',
         data: { rtpCapabilities, producerId },
       });
@@ -35,7 +35,7 @@ export function Consumer({
       if (ref.current) {
         ref.current.srcObject = stream;
         fetchApi({
-          path: `/api/peers/${transport.id}/resume`,
+          path: `/api/consumer_peers/${transport.id}/resume`,
           method: 'POST',
         });
       }
@@ -87,7 +87,7 @@ export function Consumers({
       const newTransport = device.createRecvTransport(data);
       newTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
         fetchApi({
-          path: `/api/peers/${data.id}/connect`,
+          path: `/api/consumer_peers/${data.id}/connect`,
           method: 'POST',
           data: { dtlsParameters },
         })
