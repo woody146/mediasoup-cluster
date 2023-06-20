@@ -12,8 +12,8 @@ export function Consumer({
   producers: Record<string, any>;
   transport: types.Transport;
 }) {
-  const [stream, setStream] = useState<MediaStream>();
-  const ref = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLVideoElement>(null);
 
   const subscribe = async (producerId: string) => {
     const { rtpCapabilities } = device;
@@ -30,31 +30,20 @@ export function Consumer({
       rtpParameters,
     });
 
-    let mStream;
-    if (!stream) {
-      mStream = new MediaStream();
-      mStream.addTrack(consumer.track);
-      setStream(mStream);
-    } else {
-      stream.addTrack(consumer.track);
-    }
-    if (ref.current) {
-      ref.current.srcObject = (stream || mStream) as any;
-      await fetchApi({
-        path: `/api/consumer_peers/${transport.id}/resume`,
-        method: 'POST',
-        data: { consumerId: id },
-      });
-    }
-  };
+    const stream = new MediaStream();
+    stream.addTrack(consumer.track);
 
-  useEffect(() => {
-    const mediaStream = new MediaStream();
-    setStream(mediaStream);
-    if (ref.current) {
-      ref.current.srcObject = mediaStream;
+    if (audioRef.current && kind === 'audio') {
+      audioRef.current.srcObject = stream;
+    } else if (videoRef.current && kind === 'video') {
+      videoRef.current.srcObject = stream;
     }
-  }, []);
+    await fetchApi({
+      path: `/api/consumer_peers/${transport.id}/resume`,
+      method: 'POST',
+      data: { consumerId: id },
+    });
+  };
 
   useEffect(() => {
     producers.map((item: any) => subscribe(item.id));
@@ -62,7 +51,8 @@ export function Consumer({
 
   return (
     <div className="flex flex-col">
-      <video ref={ref} controls autoPlay playsInline></video>
+      <video ref={videoRef} controls autoPlay playsInline />
+      <audio ref={audioRef} controls autoPlay playsInline />
     </div>
   );
 }
