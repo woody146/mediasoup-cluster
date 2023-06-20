@@ -1,51 +1,64 @@
 import { types } from 'mediasoup-client';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { fetchApi } from '../services/api';
 
 export function Consumer({
   device,
-  producerId,
+  producers,
   transport,
 }: {
   device: types.Device;
-  producerId: string;
+  producers: Record<string, any>;
   transport: types.Transport;
 }) {
+  const [stream, setStream] = useState<MediaStream>();
   const ref = useRef<HTMLVideoElement>(null);
 
-  const subscribe = useMemo(() => {
-    return async () => {
-      const { rtpCapabilities } = device;
-      const { id, kind, rtpParameters } = await fetchApi({
-        path: `/api/consumer_peers/${transport.id}/consume`,
-        method: 'POST',
-        data: { rtpCapabilities, producerId },
-      });
+  const subscribe = async (producerId: string) => {
+    const { rtpCapabilities } = device;
+    const { id, kind, rtpParameters } = await fetchApi({
+      path: `/api/consumer_peers/${transport.id}/consume`,
+      method: 'POST',
+      data: { rtpCapabilities, producerId },
+    });
 
-      const consumer = await transport.consume({
-        id,
-        producerId,
-        kind,
-        rtpParameters,
-      });
-      const stream = new MediaStream();
+    const consumer = await transport.consume({
+      id,
+      producerId,
+      kind,
+      rtpParameters,
+    });
+
+    let mStream;
+    if (!stream) {
+      mStream = new MediaStream();
+      mStream.addTrack(consumer.track);
+      setStream(mStream);
+    } else {
       stream.addTrack(consumer.track);
-
-      if (ref.current) {
-        ref.current.srcObject = stream;
-        fetchApi({
-          path: `/api/consumer_peers/${transport.id}/resume`,
-          method: 'POST',
-          data: { consumerId: id },
-        });
-      }
-    };
-  }, [device, producerId, transport]);
+    }
+    if (ref.current) {
+      ref.current.srcObject = (stream || mStream) as any;
+      await fetchApi({
+        path: `/api/consumer_peers/${transport.id}/resume`,
+        method: 'POST',
+        data: { consumerId: id },
+      });
+    }
+  };
 
   useEffect(() => {
-    subscribe();
-  }, [subscribe]);
+    const mediaStream = new MediaStream();
+    setStream(mediaStream);
+    if (ref.current) {
+      ref.current.srcObject = mediaStream;
+    }
+  }, []);
+
+  useEffect(() => {
+    producers.map((item: any) => subscribe(item.id));
+  }, []);
 
   return (
     <div className="flex flex-col">
@@ -137,7 +150,7 @@ export function Consumers({
             <Consumer
               device={device}
               transport={transport}
-              producerId={item.producerId}
+              producers={item.producers}
             />
           </div>
         ))}

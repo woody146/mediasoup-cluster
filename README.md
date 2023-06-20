@@ -163,7 +163,7 @@ Then, navigate to https://localhost:4430
       <td>
        <ul>
          <li>id: peer id</li>
-         <li>producerId: producer id</li>
+         <li>producers: Array<{ id: string; kind: string }></li>
        </ul>
       </td>
     </tr>
