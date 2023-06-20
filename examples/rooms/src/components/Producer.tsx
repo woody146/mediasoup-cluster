@@ -81,8 +81,8 @@ export function Producer({
         video: useVideo,
         audio: useAudio,
       });
-      const track = stream.getVideoTracks()[0];
-      await transport.produce({ track });
+      await transport.produce({ track: stream.getVideoTracks()[0] });
+      await transport.produce({ track: stream.getAudioTracks()[0] });
     } catch (err: any) {
       setLog(err.toString());
       throw err;

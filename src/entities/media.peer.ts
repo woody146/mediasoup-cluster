@@ -6,9 +6,12 @@ import {
   PrimaryColumn,
   ManyToOne,
   Index,
+  OneToMany,
 } from 'typeorm';
 import { MediaWorker } from './media.worker.js';
 import { MediaRoom } from './media.room.js';
+import { MediaConsumer } from './media.consumer.js';
+import { MediaProducer } from './media.producer.js';
 
 @Entity()
 export class MediaPeer extends BaseEntity {
@@ -36,11 +39,11 @@ export class MediaPeer extends BaseEntity {
   @Column('text', { nullable: true })
   userId?: string;
 
-  @Column('uuid', { nullable: true })
-  producerId?: string;
+  @OneToMany(() => MediaConsumer, (consumer) => consumer.peer)
+  consumers!: MediaConsumer[];
 
-  @Column({ type: 'jsonb', default: {} })
-  consumers!: any;
+  @OneToMany(() => MediaProducer, (producer) => producer.peer)
+  producers!: MediaProducer[];
 
   @Column('text')
   type!: string; // consumer | producer
