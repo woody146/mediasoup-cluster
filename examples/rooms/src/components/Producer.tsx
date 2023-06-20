@@ -18,7 +18,7 @@ export function Producer({
   const [useAudio, setUseAudio] = useState(false);
 
   const produce = async () => {
-    let stream: any;
+    let stream: MediaStream;
 
     const data = await fetchApi({
       path: `/api/rooms/${roomId}/producer_peers`,
@@ -82,9 +82,7 @@ export function Producer({
         audio: useAudio,
       });
       const track = stream.getVideoTracks()[0];
-      const params = { track };
-
-      await transport.produce(params);
+      await transport.produce({ track });
     } catch (err: any) {
       setLog(err.toString());
       throw err;

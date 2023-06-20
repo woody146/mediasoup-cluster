@@ -76,6 +76,8 @@ npm install
 npm run dev
 ```
 
+Then, navigate to https://localhost:4430
+
 ## Documentation
 
 #### Master server API
