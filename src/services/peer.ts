@@ -1,12 +1,12 @@
 import { types } from 'mediasoup';
-import { IsNull, Not } from 'typeorm';
 
 import { constants } from '../constants.js';
-import { MediaPeer, MediaWorker } from '../entities/index.js';
+import { MediaConsumer, MediaPeer, MediaWorker } from '../entities/index.js';
 import { fetchApi } from '../utils/api.js';
 import { BaseService, ServiceError } from './base.js';
 import { RoomService } from './room.js';
 import { RouterService } from './router.js';
+import { MediaProducer } from '../entities/media.producer.js';
 
 export class PeerService extends BaseService {
   async createProducer(data: {
@@ -68,8 +68,11 @@ export class PeerService extends BaseService {
         },
       });
 
-      peer.producerId = result.id;
-      await this.dataSource.getRepository(MediaPeer).save(peer);
+      const producer = new MediaProducer();
+      producer.id = result.id;
+      producer.kind = data.kind;
+      producer.peerId = peer.id;
+      await this.dataSource.getRepository(MediaProducer).save(producer);
       return result;
     }
     throw new ServiceError(400, 'Invalid peer');
@@ -153,7 +156,7 @@ export class PeerService extends BaseService {
     id: string;
   }> {
     const peer = await this.get({ peerId: data.peerId });
-    if (peer.type === constants.CONSUMER && !peer.consumers[data.producerId]) {
+    if (peer.type === constants.CONSUMER) {
       await this.createService(RouterService).checkToPipe({
         routerId: peer.routerId,
         producerId: data.producerId,
@@ -172,8 +175,11 @@ export class PeerService extends BaseService {
         },
       });
 
-      peer.consumers[data.producerId] = result.id;
-      await this.dataSource.getRepository(MediaPeer).save(peer);
+      const consumer = new MediaConsumer();
+      consumer.id = result.id;
+      consumer.producerId = data.producerId;
+      consumer.peerId = peer.id;
+      await this.dataSource.getRepository(MediaConsumer).save(consumer);
       return result;
     }
     throw new ServiceError(400, 'Invalid type peer');
@@ -217,10 +223,7 @@ export class PeerService extends BaseService {
 
   async resume(data: { peerId: string; consumerId: string }) {
     const peer = await this.get({ peerId: data.peerId });
-    if (
-      peer.type === constants.CONSUMER &&
-      Object.values(peer.consumers).includes(data.consumerId)
-    ) {
+    if (peer.type === constants.CONSUMER) {
       await fetchApi({
         host: peer.worker.internalHost,
         port: peer.worker.apiPort,
@@ -247,14 +250,14 @@ export class PeerService extends BaseService {
   async getProducers(data: { roomId: string }): Promise<
     Array<{
       id: string;
-      producerId: string;
+      producers: Array<{ id: string; kind: string }>;
     }>
   > {
     return this.dataSource.getRepository(MediaPeer).find({
-      select: ['id', 'producerId'],
+      relations: { producers: true },
+      select: ['id', 'producers'],
       where: {
         roomId: data.roomId,
-        producerId: Not(IsNull()),
         type: constants.PRODUCER,
       },
     }) as any;
