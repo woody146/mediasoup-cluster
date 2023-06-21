@@ -32,12 +32,14 @@ class MediasoupProducerWebRTCTransportManager extends MediasoupWebRTCTransportMa
 
   async create(data: { routerId: string }) {
     const router = mediasoupRouterManager.get(data.routerId);
-    const maxIncomingBitrate = Number(
-      process.env.MEDIASOUP_WEBRTC_TRANSPORT_MAX_INCOMING_BITRATE
-    );
-    const initialAvailableOutgoingBitrate = Number(
-      process.env.MEDIASOUP_WEBRTC_TRANSPORT_INITIAL_AVAILABLE_OUTGOING_BITRATE
-    );
+    const maxIncomingBitrate =
+      Number(process.env.MEDIASOUP_WEBRTC_TRANSPORT_MAX_INCOMING_BITRATE) ||
+      1500000;
+    const initialAvailableOutgoingBitrate =
+      Number(
+        process.env
+          .MEDIASOUP_WEBRTC_TRANSPORT_INITIAL_AVAILABLE_OUTGOING_BITRATE
+      ) || 1000000;
     const listenIps = JSON.parse(
       process.env.MEDIASOUP_WEBRTC_TRANSPORT_LISTEN_IPS || '[]'
     );

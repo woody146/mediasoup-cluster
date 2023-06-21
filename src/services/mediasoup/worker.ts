@@ -9,10 +9,10 @@ class MediasoupWorkerManager {
 
     for (let i = 0; i < numWorkers; ++i) {
       const worker = await mediasoup.createWorker({
-        logLevel: (process.env.MEDIASOUP_LOG_LEVEL || 'none') as any,
+        logLevel: process.env.MEDIASOUP_LOG_LEVEL as any,
         logTags: (process.env.MEDIASOUP_LOG_TAGS || ' ').split(' ') as any,
-        rtcMinPort: Number(process.env.MEDIASOUP_RTC_MIN_PORT),
-        rtcMaxPort: Number(process.env.MEDIASOUP_RTC_MAX_PORT),
+        rtcMinPort: Number(process.env.MEDIASOUP_RTC_MIN_PORT) || 20000,
+        rtcMaxPort: Number(process.env.MEDIASOUP_RTC_MAX_PORT) || 40000,
       });
 
       worker.on('died', (e) => {
