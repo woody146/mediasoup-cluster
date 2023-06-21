@@ -3,6 +3,7 @@ import { MediaPeer } from '../entities/media.peer.js';
 import { MediaWorker } from '../entities/media.worker.js';
 import { fetchApi } from '../utils/api.js';
 import { BaseService } from './base.js';
+import { RoomService } from './room.js';
 
 export class UserService extends BaseService {
   /**
@@ -32,8 +33,21 @@ export class UserService extends BaseService {
         await this.dataSource
           .getRepository(MediaWorker)
           .decrement({ id: peer.workerId }, 'peerCount', 1);
+
+        this.removeEmptyRoom(peer);
       })
     );
     return {};
+  }
+
+  async removeEmptyRoom(data: { roomId: string }) {
+    const exist = await this.dataSource.getRepository(MediaPeer).findOne({
+      select: { id: true },
+      where: { roomId: data.roomId },
+    });
+    // if no one in room
+    if (!exist) {
+      this.createService(RoomService).close(data);
+    }
   }
 }
