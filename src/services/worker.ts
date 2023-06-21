@@ -12,7 +12,7 @@ export class WorkerService extends BaseService {
         internalHost: process.env.SLAVE_INTERNAL_HOST || 'localhost',
       })
       .andWhere('apiPort = :apiPort', {
-        apiPort: Number(process.env.PORT || 80),
+        apiPort: Number(process.env.PORT || 3000),
       })
       .execute();
   }
@@ -21,8 +21,8 @@ export class WorkerService extends BaseService {
     const models = workers.map((worker) => {
       const dbWorker = new MediaWorker();
       dbWorker.internalHost = process.env.SLAVE_INTERNAL_HOST || 'localhost';
-      dbWorker.apiPort = Number(process.env.PORT || 80);
-      dbWorker.maxPeer = Number(process.env.SLAVE_MAX_PEER_PER_WORKER);
+      dbWorker.apiPort = Number(process.env.PORT || 3000);
+      dbWorker.maxPeer = Number(process.env.SLAVE_MAX_PEER_PER_WORKER) || 100;
       dbWorker.for = process.env.SLAVE_FOR || constants.CONSUMER;
       dbWorker.pid = worker.pid;
       return dbWorker;

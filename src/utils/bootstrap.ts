@@ -30,7 +30,10 @@ export async function startServer(routers: RouteConfig[]) {
       });
     });
 
-    const address = await server.listen({ port: port ? parseInt(port) : 3000 });
+    const address = await server.listen({
+      port: port ? parseInt(port) : 3000,
+      host: process.env.LISTEN_HOST,
+    });
     console.log('✅ App ready: ' + address);
   } catch (err) {
     console.error(err);
