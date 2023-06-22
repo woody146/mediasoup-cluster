@@ -19,7 +19,7 @@ export class UserService extends BaseService {
       peers.map(async (peer) => {
         try {
           await fetchApi({
-            host: peer.worker.internalHost,
+            host: peer.worker.apiHost,
             port: peer.worker.apiPort,
             path:
               peer.type === constants.CONSUMER

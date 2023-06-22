@@ -11,13 +11,13 @@ import { MediaPeer } from './media.peer.js';
 import { MediaRouter } from './media.router.js';
 
 @Entity()
-@Index(['internalHost', 'apiPort', 'pid'], { unique: true })
+@Index(['apiHost', 'apiPort', 'pid'], { unique: true })
 export class MediaWorker extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
 
   @Column('text')
-  internalHost!: string;
+  apiHost!: string;
 
   @Column('text')
   for!: string; // consumer | producer
