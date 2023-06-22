@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next-dev-https --https --qr --port 4430",
+    "proxy:https": "local-ssl-proxy --cert ssl/certificate.pem --key ssl/privatekey.pem --source 4430 --target 3000",
+    "dev": "concurrently 'next dev' 'npm run proxy:https'",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -21,9 +22,10 @@
     "@types/node": "20.2.5",
     "@types/react": "18.2.9",
     "@types/react-dom": "18.2.4",
+    "concurrently": "^8.2.0",
     "eslint": "8.42.0",
     "eslint-config-next": "13.4.4",
-    "next-dev-https": "^0.13.3",
+    "local-ssl-proxy": "^2.0.5",
     "typescript": "5.1.3"
   }
 }
