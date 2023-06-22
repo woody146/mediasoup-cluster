@@ -14,7 +14,7 @@ export class RoomService extends BaseService {
       constants.PRODUCER
     );
     const result = await fetchApi({
-      host: worker.internalHost,
+      host: worker.apiHost,
       port: worker.apiPort,
       path: '/routers',
       method: 'POST',
@@ -44,7 +44,7 @@ export class RoomService extends BaseService {
     await this.closeRouters({ roomId: room.id });
     try {
       await fetchApi({
-        host: room.worker.internalHost,
+        host: room.worker.apiHost,
         port: room.worker.apiPort,
         path: '/routers/:routerId',
         method: 'DELETE',
@@ -64,7 +64,7 @@ export class RoomService extends BaseService {
       routers.map(async (router) => {
         try {
           await fetchApi({
-            host: router.worker.internalHost,
+            host: router.worker.apiHost,
             port: router.worker.apiPort,
             path: '/routers/:routerId',
             method: 'DELETE',
@@ -83,7 +83,7 @@ export class RoomService extends BaseService {
   }> {
     const room = await this.get(data);
     const result = await fetchApi({
-      host: room.worker.internalHost,
+      host: room.worker.apiHost,
       port: room.worker.apiPort,
       path: '/routers/:routerId',
       method: 'GET',

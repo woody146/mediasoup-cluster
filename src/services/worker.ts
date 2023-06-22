@@ -8,8 +8,8 @@ export class WorkerService extends BaseService {
     return this.dataSource
       .createQueryBuilder(MediaWorker, 'MediaWorker')
       .delete()
-      .where('internalHost = :internalHost', {
-        internalHost: process.env.SLAVE_INTERNAL_HOST || '127.0.0.1',
+      .where('apiHost = :apiHost', {
+        apiHost: process.env.SLAVE_INTERNAL_HOST || '127.0.0.1',
       })
       .andWhere('apiPort = :apiPort', {
         apiPort: Number(process.env.PORT || 3000),
@@ -20,7 +20,7 @@ export class WorkerService extends BaseService {
   async addWorkers(workers: Array<types.Worker>) {
     const models = workers.map((worker) => {
       const dbWorker = new MediaWorker();
-      dbWorker.internalHost = process.env.SLAVE_INTERNAL_HOST || '127.0.0.1';
+      dbWorker.apiHost = process.env.SLAVE_INTERNAL_HOST || '127.0.0.1';
       dbWorker.apiPort = Number(process.env.PORT || 3000);
       dbWorker.maxPeer = Number(process.env.SLAVE_MAX_PEER_PER_WORKER) || 100;
       dbWorker.for = process.env.SLAVE_FOR || constants.CONSUMER;
