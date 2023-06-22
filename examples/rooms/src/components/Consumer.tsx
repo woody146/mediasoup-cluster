@@ -2,6 +2,7 @@ import { types } from 'mediasoup-client';
 import { useEffect, useRef, useState } from 'react';
 
 import { fetchApi } from '../services/api';
+import { Record } from './Record';
 
 export function Consumer({
   device,
@@ -50,9 +51,17 @@ export function Consumer({
   }, []);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-4">
       <video ref={videoRef} controls autoPlay playsInline />
       <audio ref={audioRef} controls autoPlay playsInline />
+      <div className="flex gap-4">
+        {videoRef.current && (
+          <Record stream={videoRef.current.srcObject as any} type="video" />
+        )}
+        {audioRef.current && (
+          <Record stream={audioRef.current.srcObject as any} type="audio" />
+        )}
+      </div>
     </div>
   );
 }

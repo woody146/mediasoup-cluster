@@ -45,7 +45,7 @@ export default function Home() {
             />
             <b className="ml-4">Room Id</b> {roomId} <b>User id</b> {user}
           </h3>
-          <div className="grid grid-cols-5 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div />
             <Producer device={device} roomId={roomId} userId={user} />
             <div />

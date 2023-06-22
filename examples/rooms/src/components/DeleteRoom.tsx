@@ -12,7 +12,7 @@ export function DeleteRoom() {
     setRoomId('');
   };
   return (
-    <span>
+    <div className="flex justify-center gap-4">
       <input
         placeholder="Room id"
         value={roomId}
@@ -26,6 +26,6 @@ export function DeleteRoom() {
       >
         Delete Room
       </button>
-    </span>
+    </div>
   );
 }
