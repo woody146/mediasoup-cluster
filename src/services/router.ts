@@ -15,7 +15,7 @@ export class RouterService extends BaseService {
       constants.CONSUMER
     );
     const result = await fetchApi({
-      host: worker.internalHost,
+      host: worker.apiHost,
       port: worker.apiPort,
       path: '/routers',
       method: 'POST',
@@ -42,7 +42,7 @@ export class RouterService extends BaseService {
       .getOne();
     if (router) {
       const result = await fetchApi({
-        host: router.worker.internalHost,
+        host: router.worker.apiHost,
         port: router.worker.apiPort,
         path: '/routers/:routerId',
         method: 'GET',
@@ -68,13 +68,13 @@ export class RouterService extends BaseService {
         });
 
         await fetchApi({
-          host: worker.internalHost,
+          host: worker.apiHost,
           port: worker.apiPort,
           path: '/routers/:routerId/destination_pipe_transports',
           method: 'POST',
           data: {
             routerId: data.routerId,
-            sourceHost: room.worker.internalHost,
+            sourceHost: room.worker.apiHost,
             sourcePort: room.worker.apiPort,
             sourceRouterId: room.routerId,
             sourceProducerId: data.producerId,
