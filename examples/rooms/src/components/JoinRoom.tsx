@@ -19,7 +19,7 @@ export function JoinRoom({ onSuccess }: { onSuccess: (data: any) => void }) {
   const [roomId, setRoomId] = useState('');
 
   return (
-    <span>
+    <div className="flex justify-center gap-4">
       <input
         placeholder="Room id"
         value={roomId}
@@ -33,6 +33,6 @@ export function JoinRoom({ onSuccess }: { onSuccess: (data: any) => void }) {
       >
         Join Room
       </button>
-    </span>
+    </div>
   );
 }
