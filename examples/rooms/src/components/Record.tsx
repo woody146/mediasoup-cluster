@@ -34,7 +34,7 @@ export function Record({
         window.URL.revokeObjectURL(url);
       }, 100);
     };
-    mediaRecorder.start();
+    mediaRecorder.start(3000);
     setRecorder(mediaRecorder);
   };
 

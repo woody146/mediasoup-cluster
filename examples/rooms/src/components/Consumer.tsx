@@ -1,5 +1,5 @@
 import { types } from 'mediasoup-client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { fetchApi } from '../services/api';
 import { Record } from './Record';
@@ -14,7 +14,9 @@ export function Consumer({
   transport: types.Transport;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const audioRef = useRef<HTMLVideoElement>(null);
+  const stream = useMemo(() => {
+    return new MediaStream();
+  }, []);
 
   const subscribe = async (producerId: string) => {
     const { rtpCapabilities } = device;
@@ -31,12 +33,8 @@ export function Consumer({
       rtpParameters,
     });
 
-    const stream = new MediaStream();
     stream.addTrack(consumer.track);
-
-    if (audioRef.current && kind === 'audio') {
-      audioRef.current.srcObject = stream;
-    } else if (videoRef.current && kind === 'video') {
+    if (videoRef.current && kind === 'video') {
       videoRef.current.srcObject = stream;
     }
     await fetchApi({
@@ -53,14 +51,8 @@ export function Consumer({
   return (
     <div className="flex flex-col gap-4">
       <video ref={videoRef} controls autoPlay playsInline />
-      <audio ref={audioRef} controls autoPlay playsInline />
       <div className="flex gap-4">
-        {videoRef.current && (
-          <Record stream={videoRef.current.srcObject as any} type="video" />
-        )}
-        {audioRef.current && (
-          <Record stream={audioRef.current.srcObject as any} type="audio" />
-        )}
+        <Record stream={stream} type="video" />
       </div>
     </div>
   );
