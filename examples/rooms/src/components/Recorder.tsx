@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export function Record({
+export function Recorder({
   stream,
   type,
 }: {
@@ -18,6 +18,7 @@ export function Record({
           : 'video/webm;codecs=vp9,opus',
     });
     mediaRecorder.ondataavailable = (event) => {
+      console.log(event.data);
       recordData.push(event.data);
     };
     mediaRecorder.onstop = () => {

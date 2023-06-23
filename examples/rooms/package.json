@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "proxy:https": "local-ssl-proxy --cert ssl/certificate.pem --key ssl/privatekey.pem --source 4430 --target 3000",
-    "dev": "concurrently 'next dev' 'npm run proxy:https'",
+    "dev": "concurrently 'npx next dev' 'npm run proxy:https'",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
