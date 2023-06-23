@@ -1,17 +1,19 @@
 import { types } from 'mediasoup-client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { fetchApi } from '../services/api';
-import { Record } from './Record';
+import { fetchApi, MultiStreamsMixer } from '../services';
+import { Recorder } from './Recorder';
 
 export function Consumer({
   device,
   producers,
   transport,
+  onSuccess,
 }: {
   device: types.Device;
   producers: Record<string, any>;
   transport: types.Transport;
+  onSuccess: (consumer: types.Consumer) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const stream = useMemo(() => {
@@ -34,7 +36,8 @@ export function Consumer({
     });
 
     stream.addTrack(consumer.track);
-    if (videoRef.current && kind === 'video') {
+    onSuccess(consumer);
+    if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
     await fetchApi({
@@ -51,9 +54,6 @@ export function Consumer({
   return (
     <div className="flex flex-col gap-4">
       <video ref={videoRef} controls autoPlay playsInline />
-      <div className="flex gap-4">
-        <Record stream={stream} type="video" />
-      </div>
     </div>
   );
 }
@@ -73,6 +73,19 @@ export function Consumers({
   const [log, setLog] = useState('');
   const [transport, setTransport] = useState<types.Transport>();
   const [connected, setConnected] = useState(false);
+
+  const [streams, setStreams] = useState<Array<MediaStream>>([]);
+  const [streamsMixer, setStreamsMixer] = useState<MultiStreamsMixer>();
+
+  const appendStream = useMemo(() => {
+    return (aStreams: Array<MediaStream>) => {
+      if (streamsMixer) {
+        streamsMixer.appendStreams(aStreams);
+        return true;
+      }
+      return false;
+    };
+  }, [streamsMixer]);
 
   const load = async () => {
     const itemsResult = await fetchApi({
@@ -126,7 +139,20 @@ export function Consumers({
   }, []);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-4">
+      {streamsMixer ? (
+        <Recorder stream={streamsMixer.getMixedStream()} type="audio" />
+      ) : (
+        <button
+          className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500"
+          onClick={() => {
+            const s = new MultiStreamsMixer(streams);
+            setStreamsMixer(s);
+          }}
+        >
+          Start
+        </button>
+      )}
       <button
         className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500"
         onClick={() => load()}
@@ -142,6 +168,15 @@ export function Consumers({
               device={device}
               transport={transport}
               producers={item.producers}
+              onSuccess={(consumer) => {
+                if (consumer.kind === 'audio') {
+                  const stream = new MediaStream();
+                  stream.addTrack(consumer.track);
+                  if (!appendStream([stream])) {
+                    setStreams([...streams, stream]);
+                  }
+                }
+              }}
             />
           </div>
         ))}
