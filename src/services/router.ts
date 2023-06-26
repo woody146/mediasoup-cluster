@@ -26,7 +26,19 @@ export class RouterService extends BaseService {
     mediaRouter.id = result.id;
     mediaRouter.workerId = worker.id;
     Object.assign(mediaRouter, data);
-    await this.dataSource.getRepository(MediaRouter).save(mediaRouter);
+    try {
+      await this.dataSource.getRepository(MediaRouter).save(mediaRouter);
+    } catch (e) {
+      // violates foreign key constraint because room doesn't exist
+      fetchApi({
+        host: worker.apiHost,
+        port: worker.apiPort,
+        path: '/routers/:routerId',
+        method: 'DELETE',
+        data: { routerId: result.id },
+      });
+      throw new ServiceError(404, 'Room not found');
+    }
     return result;
   }
 
