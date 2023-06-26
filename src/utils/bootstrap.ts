@@ -1,3 +1,4 @@
+import FastifyStatic from '@fastify/static';
 import Fastify from 'fastify';
 import dotenv from 'dotenv';
 import { getDataSource } from './datasource.js';
@@ -8,13 +9,23 @@ export interface RouteConfig {
   handler: (data: any) => any;
 }
 
-export async function startServer(routers: RouteConfig[]) {
+export async function startServer(
+  routers: RouteConfig[],
+  options?: { staticFolder?: string }
+) {
   const server = Fastify({
     logger: true,
   });
   dotenv.config();
 
   try {
+    if (options?.staticFolder) {
+      server.register(FastifyStatic, {
+        root: options.staticFolder,
+        prefix: '/static/',
+      });
+    }
+
     const port = process.env.PORT;
     await getDataSource().initialize();
 
