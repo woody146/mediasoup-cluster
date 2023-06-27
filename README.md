@@ -161,6 +161,7 @@ Then, navigate to https://localhost:4430
       <td>
       </td>
       <td>
+       Array of objects
        <ul>
          <li>id: peer id</li>
          <li>producers: Array<{ id: string; kind: string }></li>
