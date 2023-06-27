@@ -1,18 +1,16 @@
 import { types } from 'mediasoup-client';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { fetchApi, MultiStreamsMixer } from '../services';
+import { ClientRoom, fetchApi, MultiStreamsMixer } from '../services';
 import { Recorder } from './Recorder';
 
 export function Consumer({
-  device,
   producers,
-  transport,
+  room,
   onSuccess,
 }: {
-  device: types.Device;
+  room: ClientRoom;
   producers: Record<string, any>;
-  transport: types.Transport;
   onSuccess: (consumer: types.Consumer) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -21,14 +19,14 @@ export function Consumer({
   }, []);
 
   const subscribe = async (producerId: string) => {
-    const { rtpCapabilities } = device;
+    const { rtpCapabilities } = room.device;
     const { id, kind, rtpParameters } = await fetchApi({
-      path: `/api/consumer_peers/${transport.id}/consume`,
+      path: `/api/consumer_peers/${room.recvTransport?.id}/consume`,
       method: 'POST',
       data: { rtpCapabilities, producerId },
     });
 
-    const consumer = await transport.consume({
+    const consumer = await room.consume({
       id,
       producerId,
       kind,
@@ -41,7 +39,7 @@ export function Consumer({
       videoRef.current.srcObject = stream;
     }
     await fetchApi({
-      path: `/api/consumer_peers/${transport.id}/resume`,
+      path: `/api/consumer_peers/${room.recvTransport?.id}/resume`,
       method: 'POST',
       data: { consumerId: id },
     });
@@ -59,20 +57,17 @@ export function Consumer({
 }
 
 export function Consumers({
-  device,
-  roomId,
+  room,
   routerId,
   userId,
 }: {
-  device: types.Device;
-  roomId: string;
+  room: ClientRoom;
   routerId: string;
   userId: string;
 }) {
   const [items, setItems] = useState<Array<any>>([]);
   const [log, setLog] = useState('');
   const [transport, setTransport] = useState<types.Transport>();
-  const [connected, setConnected] = useState(false);
 
   const [streams, setStreams] = useState<Array<MediaStream>>([]);
   const [streamsMixer, setStreamsMixer] = useState<MultiStreamsMixer>();
@@ -87,55 +82,37 @@ export function Consumers({
     };
   }, [streamsMixer]);
 
-  const load = async () => {
-    const itemsResult = await fetchApi({
-      path: `/api/rooms/${roomId}/producer_peers`,
-      method: 'GET',
+  const initRecvTransport = async () => {
+    const data = await fetchApi({
+      path: `/api/router/${routerId}/consumer_peers`,
+      method: 'POST',
+      data: { userId: userId },
     });
-    setItems(itemsResult);
-
-    if (!transport) {
-      const data = await fetchApi({
-        path: `/api/router/${routerId}/consumer_peers`,
-        method: 'POST',
-        data: { userId: userId },
-      });
-      const newTransport = device.createRecvTransport(data);
-      newTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
+    const transport = room.initRecvTransport(data, {
+      onConnect: (params) =>
         fetchApi({
           path: `/api/consumer_peers/${data.id}/connect`,
           method: 'POST',
-          data: { dtlsParameters },
-        })
-          .then(callback)
-          .catch(errback);
-      });
-      newTransport.on('connectionstatechange', async (state) => {
-        switch (state) {
-          case 'connecting':
-            setLog('subscribing...');
-            break;
+          data: params,
+        }),
+      onConnecting: () => setLog('subscribing...'),
+      onFailed: () => setLog('failed'),
+      onConnected: () => setLog('connected'),
+    });
+    setTransport(transport);
+  };
 
-          case 'connected':
-            setLog('subscribed');
-            setConnected(true);
-            break;
-
-          case 'failed':
-            newTransport.close();
-            setLog('failed');
-            break;
-
-          default:
-            break;
-        }
-      });
-      setTransport(newTransport);
-    }
+  const loadproducers = async () => {
+    const itemsResult = await fetchApi({
+      path: `/api/rooms/${room.roomId}/producer_peers`,
+      method: 'GET',
+    });
+    setItems(itemsResult);
   };
 
   useEffect(() => {
-    load();
+    loadproducers();
+    initRecvTransport();
   }, []);
 
   return (
@@ -155,18 +132,16 @@ export function Consumers({
       )}
       <button
         className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500"
-        onClick={() => load()}
+        onClick={() => loadproducers()}
       >
         Refresh
       </button>
       <div className="pt-4">{log}</div>
       {transport &&
-        // must init transport with first producer, then it can consume many producers
-        items.slice(0, connected ? items.length : 1).map((item) => (
+        items.map((item) => (
           <div key={item.id} className="mt-4">
             <Consumer
-              device={device}
-              transport={transport}
+              room={room}
               producers={item.producers}
               onSuccess={(consumer) => {
                 if (consumer.kind === 'audio') {

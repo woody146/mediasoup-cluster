@@ -1,5 +1,4 @@
 'use client';
-import { Device, types } from 'mediasoup-client';
 import { useEffect, useState } from 'react';
 import {
   Consumers,
@@ -9,11 +8,11 @@ import {
   JoinRoom,
   Producer,
 } from '../components';
+import { ClientRoom } from '../services';
 
 export default function Home() {
-  const [roomId, setRoomId] = useState<string>();
   const [routerId, setRouterId] = useState<string>();
-  const [device, setDevice] = useState<types.Device>();
+  const [room, setRoom] = useState<ClientRoom>();
   const [user, setUser] = useState('');
 
   useEffect(() => {
@@ -21,40 +20,33 @@ export default function Home() {
   }, []);
 
   const updateDevice = async (data: any) => {
-    const newDevice = new Device();
-    await newDevice.load({
+    const clientRoom = new ClientRoom(data.roomId);
+    clientRoom.initDevice({
       routerRtpCapabilities: data.rtpCapabilities,
     });
-    setDevice(newDevice);
-    setRoomId(data.roomId);
+    setRoom(clientRoom);
     setRouterId(data.routerId);
   };
 
   return (
     <div className="text-center p-8">
-      {device && roomId && routerId ? (
+      {room && routerId ? (
         <div>
           <h3 className="my-4">
             <ExitRoom
-              roomId={roomId}
+              roomId={room.roomId}
               userId={user}
               onSuccess={() => {
-                setDevice(undefined);
-                setRoomId(undefined);
+                setRoom(undefined);
               }}
             />
-            <b className="ml-4">Room Id</b> {roomId} <b>User id</b> {user}
+            <b className="ml-4">Room Id</b> {room.roomId} <b>User id</b> {user}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div />
-            <Producer device={device} roomId={roomId} userId={user} />
+            <Producer room={room} userId={user} />
             <div />
-            <Consumers
-              device={device}
-              roomId={roomId}
-              routerId={routerId}
-              userId={user}
-            />
+            <Consumers room={room} routerId={routerId} userId={user} />
           </div>
         </div>
       ) : (
