@@ -1,7 +1,8 @@
 import { Device, type types } from 'mediasoup-client';
 
 export class ClientRoom {
-  device: types.Device;
+  device = new Device();
+  eventTarget = new EventTarget();
 
   recvTransport?: types.Transport;
   sendTransport?: types.Transport;
@@ -9,9 +10,10 @@ export class ClientRoom {
   consumers: types.Consumer[] = [];
   producers: types.Producer[] = [];
 
-  constructor(public roomId: string) {
-    this.device = new Device();
-  }
+  onNewProducer: Array<(producer: types.Producer) => void> = [];
+  onNewConsumer: Array<(consumer: types.Consumer) => void> = [];
+
+  constructor(public roomId: string) {}
 
   async initDevice(data: Parameters<Device['load']>[0]) {
     await this.device.load(data);
@@ -103,6 +105,7 @@ export class ClientRoom {
     if (this.recvTransport) {
       const consumer = await this.recvTransport.consume(data);
       this.consumers.push(consumer);
+      this.onNewConsumer.forEach((handler) => handler(consumer));
       return consumer;
     }
     throw new Error('Must init recvTransport before');
@@ -116,6 +119,7 @@ export class ClientRoom {
     if (this.sendTransport) {
       const producer = await this.sendTransport.produce(data);
       this.producers.push(producer);
+      this.onNewProducer.forEach((handler) => handler(producer));
       return producer;
     }
     throw new Error('Must init sendTransport before');

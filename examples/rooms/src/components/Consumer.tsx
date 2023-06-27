@@ -7,11 +7,9 @@ import { Recorder } from './Recorder';
 export function Consumer({
   producers,
   room,
-  onSuccess,
 }: {
   room: ClientRoom;
   producers: Record<string, any>;
-  onSuccess: (consumer: types.Consumer) => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const stream = useMemo(() => {
@@ -34,7 +32,6 @@ export function Consumer({
     });
 
     stream.addTrack(consumer.track);
-    onSuccess(consumer);
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
@@ -91,7 +88,7 @@ export function Consumers({
     setTransport(transport);
   };
 
-  const loadproducers = async () => {
+  const loadProducers = async () => {
     const itemsResult = await fetchApi({
       path: `/api/rooms/${room.roomId}/producer_peers`,
       method: 'GET',
@@ -100,8 +97,15 @@ export function Consumers({
   };
 
   useEffect(() => {
-    loadproducers();
+    loadProducers();
     initRecvTransport();
+    room.onNewConsumer.push((consumer) => {
+      if (consumer.kind === 'audio') {
+        const stream = new MediaStream();
+        stream.addTrack(consumer.track);
+        streamsMixer.appendStreams([stream]);
+      }
+    });
   }, []);
 
   return (
@@ -109,7 +113,7 @@ export function Consumers({
       <Recorder stream={streamsMixer.getMixedStream()} type="audio" />
       <button
         className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500"
-        onClick={() => loadproducers()}
+        onClick={() => loadProducers()}
       >
         Refresh
       </button>
@@ -117,17 +121,7 @@ export function Consumers({
       {transport &&
         items.map((item) => (
           <div key={item.id} className="mt-4">
-            <Consumer
-              room={room}
-              producers={item.producers}
-              onSuccess={(consumer) => {
-                if (consumer.kind === 'audio') {
-                  const stream = new MediaStream();
-                  stream.addTrack(consumer.track);
-                  streamsMixer.appendStreams([stream]);
-                }
-              }}
-            />
+            <Consumer room={room} producers={item.producers} />
           </div>
         ))}
     </div>
