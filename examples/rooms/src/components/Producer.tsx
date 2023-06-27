@@ -1,14 +1,11 @@
-import { types } from 'mediasoup-client';
-import { fetchApi } from '../services';
+import { ClientRoom, fetchApi } from '../services';
 import { useRef, useState } from 'react';
 
 export function Producer({
-  device,
-  roomId,
+  room,
   userId,
 }: {
-  device: types.Device;
-  roomId: string;
+  room: ClientRoom;
   userId: string;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
@@ -21,59 +18,32 @@ export function Producer({
     let stream: MediaStream;
 
     const data = await fetchApi({
-      path: `/api/rooms/${roomId}/producer_peers`,
+      path: `/api/rooms/${room.roomId}/producer_peers`,
       method: 'POST',
       data: { userId: userId },
     });
 
-    const transport = device.createSendTransport(data);
-    transport.on('connect', async ({ dtlsParameters }, callback, errback) => {
-      fetchApi({
-        path: `/api/producer_peers/${data.id}/connect`,
-        method: 'POST',
-        data: { dtlsParameters },
-      })
-        .then(callback)
-        .catch(errback);
-    });
-
-    transport.on(
-      'produce',
-      async ({ kind, rtpParameters }, callback, errback) => {
-        try {
-          const { id } = await fetchApi({
-            path: `/api/producer_peers/${data.id}/produce`,
-            method: 'POST',
-            data: { kind, rtpParameters },
-          });
-          callback({ id });
-        } catch (err: any) {
-          errback(err);
+    const transport = room.initSendTransport(data, {
+      onConnect: (params) =>
+        fetchApi({
+          path: `/api/producer_peers/${data.id}/connect`,
+          method: 'POST',
+          data: params,
+        }),
+      onProduce: (params) =>
+        fetchApi({
+          path: `/api/producer_peers/${data.id}/produce`,
+          method: 'POST',
+          data: params,
+        }),
+      onConnecting: () => setLog('publishing...'),
+      onFailed: () => setLog('failed'),
+      onConnected: () => {
+        if (ref.current) {
+          ref.current.srcObject = stream;
         }
-      }
-    );
-
-    transport.on('connectionstatechange', (state) => {
-      switch (state) {
-        case 'connecting':
-          setLog('publishing...');
-          break;
-
-        case 'connected':
-          if (ref.current) {
-            ref.current.srcObject = stream;
-          }
-          setLog('published');
-          break;
-
-        case 'failed':
-          transport.close();
-          setLog('failed');
-          break;
-
-        default:
-          break;
-      }
+        setLog('published');
+      },
     });
 
     try {
