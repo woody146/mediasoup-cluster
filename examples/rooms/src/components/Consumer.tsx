@@ -69,18 +69,7 @@ export function Consumers({
   const [log, setLog] = useState('');
   const [transport, setTransport] = useState<types.Transport>();
 
-  const [streams, setStreams] = useState<Array<MediaStream>>([]);
-  const [streamsMixer, setStreamsMixer] = useState<MultiStreamsMixer>();
-
-  const appendStream = useMemo(() => {
-    return (aStreams: Array<MediaStream>) => {
-      if (streamsMixer) {
-        streamsMixer.appendStreams(aStreams);
-        return true;
-      }
-      return false;
-    };
-  }, [streamsMixer]);
+  const streamsMixer = useMemo(() => new MultiStreamsMixer([]), []);
 
   const initRecvTransport = async () => {
     const data = await fetchApi({
@@ -117,19 +106,7 @@ export function Consumers({
 
   return (
     <div className="flex flex-col gap-4">
-      {streamsMixer ? (
-        <Recorder stream={streamsMixer.getMixedStream()} type="audio" />
-      ) : (
-        <button
-          className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500"
-          onClick={() => {
-            const s = new MultiStreamsMixer(streams);
-            setStreamsMixer(s);
-          }}
-        >
-          Start
-        </button>
-      )}
+      <Recorder stream={streamsMixer.getMixedStream()} type="audio" />
       <button
         className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500"
         onClick={() => loadproducers()}
@@ -147,9 +124,7 @@ export function Consumers({
                 if (consumer.kind === 'audio') {
                   const stream = new MediaStream();
                   stream.addTrack(consumer.track);
-                  if (!appendStream([stream])) {
-                    setStreams([...streams, stream]);
-                  }
+                  streamsMixer.appendStreams([stream]);
                 }
               }}
             />
