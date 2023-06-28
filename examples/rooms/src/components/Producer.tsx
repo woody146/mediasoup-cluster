@@ -1,4 +1,5 @@
-import { ClientRoom, fetchApi } from '../services';
+import { ClientRoom } from 'mediasoup-client-utils';
+import { fetchApi } from '../services';
 import { useRef, useState } from 'react';
 
 export function Producer({
