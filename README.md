@@ -161,11 +161,12 @@ Then, navigate to https://localhost:4430
       <td>
       </td>
       <td>
-       Array of objects
-       <ul>
-         <li>id: peer id</li>
-         <li>producers: Array<{ id: string; kind: string }></li>
-       </ul>
+      <ul>
+        <li>items: array of objects</li>
+        <ul>
+          <li>id: peer id</li>
+          <li>producers: Array<{ id: string; kind: string }></li>
+        </ul>
       </td>
     </tr>
     <tr>
