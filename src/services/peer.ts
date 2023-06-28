@@ -247,19 +247,20 @@ export class PeerService extends BaseService {
     throw new ServiceError(404, 'Peer not found');
   }
 
-  async getProducers(data: { roomId: string }): Promise<
-    Array<{
+  async getProducers(data: { roomId: string }): Promise<{
+    items: Array<{
       id: string;
       producers: Array<{ id: string; kind: string }>;
-    }>
-  > {
-    return this.dataSource.getRepository(MediaPeer).find({
+    }>;
+  }> {
+    const items = (await this.dataSource.getRepository(MediaPeer).find({
       relations: { producers: true },
       select: ['id', 'producers'],
       where: {
         roomId: data.roomId,
         type: constants.PRODUCER,
       },
-    }) as any;
+    })) as any;
+    return { items };
   }
 }

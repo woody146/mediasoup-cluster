@@ -2,7 +2,6 @@ import { Device, type types } from 'mediasoup-client';
 
 export class ClientRoom {
   device = new Device();
-  eventTarget = new EventTarget();
 
   recvTransport?: types.Transport;
   sendTransport?: types.Transport;

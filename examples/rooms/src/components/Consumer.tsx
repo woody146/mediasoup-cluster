@@ -89,11 +89,11 @@ export function Consumers({
   };
 
   const loadProducers = async () => {
-    const itemsResult = await fetchApi({
+    const result = await fetchApi({
       path: `/api/rooms/${room.roomId}/producer_peers`,
       method: 'GET',
     });
-    setItems(itemsResult);
+    setItems(result.items);
   };
 
   useEffect(() => {
