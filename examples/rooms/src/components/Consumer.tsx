@@ -1,7 +1,8 @@
 import { types } from 'mediasoup-client';
+import { ClientRoom, MultiStreamsMixer } from 'mediasoup-client-utils';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { ClientRoom, fetchApi, MultiStreamsMixer } from '../services';
+import { fetchApi } from '../services';
 import { Recorder } from './Recorder';
 
 export function Consumer({
