@@ -1,4 +1,5 @@
 'use client';
+import { ClientRoom } from 'mediasoup-client-utils';
 import { useEffect, useState } from 'react';
 import {
   Consumers,
@@ -8,7 +9,6 @@ import {
   JoinRoom,
   Producer,
 } from '../components';
-import { ClientRoom } from '../services';
 
 export default function Home() {
   const [routerId, setRouterId] = useState<string>();
