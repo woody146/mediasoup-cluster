@@ -34,7 +34,7 @@ export class UserService extends BaseService {
           .getRepository(MediaWorker)
           .decrement({ id: peer.workerId }, 'peerCount', 1);
 
-        this.removeEmptyRoom(peer);
+        // this.removeEmptyRoom(peer);
       })
     );
     return {};
