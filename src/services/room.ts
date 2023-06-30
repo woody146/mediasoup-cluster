@@ -39,6 +39,28 @@ export class RoomService extends BaseService {
     throw new ServiceError(404, 'Room not found');
   }
 
+  async getList({
+    page = 1,
+    pageSize = 30,
+    orderBy = '-createDate',
+  }: {
+    pageSize?: number;
+    page?: number;
+    orderBy?: string;
+  }) {
+    const [items, total] = await this.dataSource
+      .getRepository(MediaRoom)
+      .findAndCount({
+        take: Math.max(pageSize, 100),
+        skip: (page - 1) * pageSize,
+        order: { [orderBy.slice(1)]: orderBy[0] === '-' ? 'DESC' : 'ASC' },
+      });
+    return {
+      items,
+      pagination: { page, pageSize, total },
+    };
+  }
+
   async close(data: { roomId: string }) {
     const room = await this.get(data);
     await this.closeRouters({ roomId: room.id });

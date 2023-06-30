@@ -237,7 +237,7 @@ Then, navigate to https://localhost:4430
       <td></td>
     </tr>
     <tr>
-      <th colspan="4" align="center">For both</th>
+      <th colspan="4" align="center">Utils</th>
     </tr>
     <tr>
       <td>POST</td>
@@ -248,6 +248,32 @@ Then, navigate to https://localhost:4430
         </ul>
       </td>
       <td></td>
+    </tr>
+    <tr>
+      <td>GET</td>
+      <td>/rooms<br /><i>get room list in system</i></td>
+      <td>
+        <ul>
+         <li>page?: number</li>
+         <li>pageSize?: number</li>
+         <li>orderBy?: string</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>items: array of room object</li>
+          <ul>
+            <li>id: string</li>
+            <li>createDate: Date</li>
+          </ul>
+          <li>pagination</li>
+          <ul>
+            <li>page: number</li>
+            <li>pageSize: number</li>
+            <li>total: number</li>
+          </ul>
+        </ul>
+      </td>
     </tr>
   </tbody>
 </table>

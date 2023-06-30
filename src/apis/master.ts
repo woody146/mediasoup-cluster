@@ -8,6 +8,13 @@ import { RouteConfig, getDataSource } from '../utils/index.js';
 
 export default [
   {
+    method: 'GET',
+    url: '/rooms',
+    handler: (data) => {
+      return new RoomService(getDataSource()).getList(data);
+    },
+  },
+  {
     method: 'POST',
     url: '/rooms',
     handler: () => {
