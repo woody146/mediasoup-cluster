@@ -19,7 +19,7 @@ export function Producer({
     let stream: MediaStream;
 
     const data = await fetchApi({
-      path: `/api/rooms/${room.roomId}/producer_peers`,
+      path: `/api/rooms/${room.roomId}/producer_transports`,
       method: 'POST',
       data: { userId: userId },
     });
@@ -27,13 +27,13 @@ export function Producer({
     const transport = room.initSendTransport(data, {
       onConnect: (params) =>
         fetchApi({
-          path: `/api/producer_peers/${data.id}/connect`,
+          path: `/api/producer_transports/${data.id}/connect`,
           method: 'POST',
           data: params,
         }),
       onProduce: (params) =>
         fetchApi({
-          path: `/api/producer_peers/${data.id}/produce`,
+          path: `/api/producer_transports/${data.id}/produce`,
           method: 'POST',
           data: params,
         }),

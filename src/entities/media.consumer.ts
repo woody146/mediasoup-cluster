@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { MediaPeer } from './media.peer.js';
+import { MediaTransport } from './media.transport.js';
 
 @Entity()
 export class MediaConsumer extends BaseEntity {
@@ -17,12 +17,12 @@ export class MediaConsumer extends BaseEntity {
   producerId!: string;
 
   @Column('uuid')
-  peerId!: string;
+  transportId!: string;
 
-  @ManyToOne(() => MediaPeer, (peer) => peer.consumers, {
+  @ManyToOne(() => MediaTransport, (transport) => transport.consumers, {
     onDelete: 'CASCADE',
   })
-  peer!: MediaPeer;
+  transport!: MediaTransport;
 
   @CreateDateColumn()
   createDate!: Date;

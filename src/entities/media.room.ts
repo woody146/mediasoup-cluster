@@ -8,7 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { MediaWorker } from './media.worker.js';
-import { MediaPeer } from './media.peer.js';
+import { MediaTransport } from './media.transport.js';
 import { MediaRouter } from './media.router.js';
 
 @Entity()
@@ -34,8 +34,8 @@ export class MediaRoom extends BaseEntity {
   @CreateDateColumn()
   createDate!: Date;
 
-  @OneToMany(() => MediaPeer, (peer) => peer.room)
-  peers!: MediaPeer[];
+  @OneToMany(() => MediaTransport, (transport) => transport.room)
+  transports!: MediaTransport[];
 
   @OneToMany(() => MediaRouter, (router) => router.room)
   routers!: MediaRouter[];

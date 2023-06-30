@@ -14,14 +14,14 @@ import { MediaConsumer } from './media.consumer.js';
 import { MediaProducer } from './media.producer.js';
 
 @Entity()
-export class MediaPeer extends BaseEntity {
+export class MediaTransport extends BaseEntity {
   @PrimaryColumn('uuid')
   id!: string;
 
   @Column('uuid')
   workerId!: string;
 
-  @ManyToOne(() => MediaWorker, (worker) => worker.peers, {
+  @ManyToOne(() => MediaWorker, (worker) => worker.transports, {
     onDelete: 'CASCADE',
   })
   worker!: MediaWorker;
@@ -29,7 +29,9 @@ export class MediaPeer extends BaseEntity {
   @Column('uuid')
   roomId!: string;
 
-  @ManyToOne(() => MediaRoom, (room) => room.peers, { onDelete: 'CASCADE' })
+  @ManyToOne(() => MediaRoom, (room) => room.transports, {
+    onDelete: 'CASCADE',
+  })
   room!: MediaRoom;
 
   @Column('uuid')
@@ -39,10 +41,10 @@ export class MediaPeer extends BaseEntity {
   @Column('text', { nullable: true })
   userId?: string;
 
-  @OneToMany(() => MediaConsumer, (consumer) => consumer.peer)
+  @OneToMany(() => MediaConsumer, (consumer) => consumer.transport)
   consumers!: MediaConsumer[];
 
-  @OneToMany(() => MediaProducer, (producer) => producer.peer)
+  @OneToMany(() => MediaProducer, (producer) => producer.transport)
   producers!: MediaProducer[];
 
   @Column('text')

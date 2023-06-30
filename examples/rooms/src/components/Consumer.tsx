@@ -20,7 +20,7 @@ export function Consumer({
   const subscribe = async (producerId: string) => {
     const { rtpCapabilities } = room.device;
     const { id, kind, rtpParameters } = await fetchApi({
-      path: `/api/consumer_peers/${room.recvTransport?.id}/consume`,
+      path: `/api/consumer_transports/${room.recvTransport?.id}/consume`,
       method: 'POST',
       data: { rtpCapabilities, producerId },
     });
@@ -37,7 +37,7 @@ export function Consumer({
       videoRef.current.srcObject = stream;
     }
     await fetchApi({
-      path: `/api/consumer_peers/${room.recvTransport?.id}/resume`,
+      path: `/api/consumer_transports/${room.recvTransport?.id}/resume`,
       method: 'POST',
       data: { consumerId: id },
     });
@@ -71,14 +71,14 @@ export function Consumers({
 
   const initRecvTransport = async () => {
     const data = await fetchApi({
-      path: `/api/router/${routerId}/consumer_peers`,
+      path: `/api/router/${routerId}/consumer_transports`,
       method: 'POST',
       data: { userId: userId },
     });
     const transport = room.initRecvTransport(data, {
       onConnect: (params) =>
         fetchApi({
-          path: `/api/consumer_peers/${data.id}/connect`,
+          path: `/api/consumer_transports/${data.id}/connect`,
           method: 'POST',
           data: params,
         }),
@@ -91,7 +91,7 @@ export function Consumers({
 
   const loadProducers = async () => {
     const result = await fetchApi({
-      path: `/api/rooms/${room.roomId}/producer_peers`,
+      path: `/api/rooms/${room.roomId}/producer_transports`,
       method: 'GET',
     });
     setItems(result.items);

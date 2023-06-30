@@ -6,9 +6,9 @@
     "build": "tsc",
     "release": "standard-version",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:master": "cross-env PORT=3010 node dist/run_master.js",
-    "start:slave:producer": "cross-env PORT=3011 SLAVE_FOR=producer node dist/run_slave.js",
-    "start:slave:consumer": "cross-env PORT=3012 SLAVE_FOR=consumer node dist/run_slave.js",
+    "start:master": "cross-env PORT=3020 node dist/run_master.js",
+    "start:slave:producer": "cross-env PORT=3021 SLAVE_FOR=producer node dist/run_slave.js",
+    "start:slave:consumer": "cross-env PORT=3022 SLAVE_FOR=consumer node dist/run_slave.js",
     "dev": "npm run start:slave:producer",
     "prepare": "husky install"
   },

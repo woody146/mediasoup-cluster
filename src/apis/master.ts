@@ -1,5 +1,5 @@
 import {
-  PeerService,
+  TransportService,
   RoomService,
   RouterService,
   UserService,
@@ -44,65 +44,65 @@ export default [
   },
   {
     method: 'POST',
-    url: '/rooms/:roomId/producer_peers',
+    url: '/rooms/:roomId/producer_transports',
     handler: (data) => {
-      return new PeerService(getDataSource()).createProducer(data);
+      return new TransportService(getDataSource()).createProducer(data);
     },
   },
   {
     method: 'GET',
-    url: '/rooms/:roomId/producer_peers',
+    url: '/rooms/:roomId/producer_transports',
     handler: (data) => {
-      return new PeerService(getDataSource()).getProducers(data);
+      return new TransportService(getDataSource()).getProducers(data);
     },
   },
   {
     method: 'POST',
-    url: '/rooms/:roomId/consumer_peers',
+    url: '/rooms/:roomId/consumer_transports',
     handler: (data) => {
-      return new PeerService(getDataSource()).createSameHostConsumer(data);
+      return new TransportService(getDataSource()).createSameHostConsumer(data);
     },
   },
   {
     method: 'POST',
-    url: '/router/:routerId/consumer_peers',
+    url: '/router/:routerId/consumer_transports',
     handler: (data) => {
-      return new PeerService(getDataSource()).createConsumer(data);
+      return new TransportService(getDataSource()).createConsumer(data);
     },
   },
   {
     method: 'POST',
-    url: '/producer_peers/:peerId/connect',
+    url: '/producer_transports/:transportId/connect',
     handler: (data) => {
-      return new PeerService(getDataSource()).connectProducer(data);
+      return new TransportService(getDataSource()).connectProducer(data);
     },
   },
   {
     method: 'POST',
-    url: '/consumer_peers/:peerId/connect',
+    url: '/consumer_transports/:transportId/connect',
     handler: (data) => {
-      return new PeerService(getDataSource()).connectConsumer(data);
+      return new TransportService(getDataSource()).connectConsumer(data);
     },
   },
   {
     method: 'POST',
-    url: '/consumer_peers/:peerId/resume',
+    url: '/consumer_transports/:transportId/resume',
     handler: (data) => {
-      return new PeerService(getDataSource()).resume(data);
+      return new TransportService(getDataSource()).resume(data);
     },
   },
   {
     method: 'POST',
-    url: '/producer_peers/:peerId/produce',
+    url: '/producer_transports/:transportId/produce',
     handler: (data) => {
-      return new PeerService(getDataSource()).produce(data);
+      return new TransportService(getDataSource()).produce(data);
     },
   },
   {
     method: 'POST',
-    url: '/consumer_peers/:peerId/consume',
+    url: '/consumer_transports/:transportId/consume',
     handler: (data) => {
-      return new PeerService(getDataSource()).consume(data);
+      return new TransportService(getDataSource()).consume(data);
     },
   },
   {

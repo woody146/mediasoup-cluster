@@ -1,6 +1,5 @@
 import { constants } from '../constants.js';
-import { MediaPeer } from '../entities/media.peer.js';
-import { MediaWorker } from '../entities/media.worker.js';
+import { MediaTransport, MediaWorker } from '../entities/index.js';
 import { fetchApi } from '../utils/api.js';
 import { BaseService } from './base.js';
 import { RoomService } from './room.js';
@@ -11,37 +10,39 @@ export class UserService extends BaseService {
    * Otherwise make user logout from all room.
    */
   async logout(data: { userId: string; roomId?: string }) {
-    const peers = await this.dataSource.getRepository(MediaPeer).find({
-      relations: { worker: true },
-      where: { userId: data.userId, roomId: data.roomId },
-    });
+    const transports = await this.dataSource
+      .getRepository(MediaTransport)
+      .find({
+        relations: { worker: true },
+        where: { userId: data.userId, roomId: data.roomId },
+      });
     await Promise.all(
-      peers.map(async (peer) => {
+      transports.map(async (transport) => {
         try {
           await fetchApi({
-            host: peer.worker.apiHost,
-            port: peer.worker.apiPort,
+            host: transport.worker.apiHost,
+            port: transport.worker.apiPort,
             path:
-              peer.type === constants.CONSUMER
+              transport.type === constants.CONSUMER
                 ? `/consumer_transports/:transportId`
                 : `/producer_transports/:transportId`,
             method: 'DELETE',
-            data: { transportId: peer.id },
+            data: { transportId: transport.id },
           });
         } catch {}
-        await this.dataSource.getRepository(MediaPeer).remove(peer);
+        await this.dataSource.getRepository(MediaTransport).remove(transport);
         await this.dataSource
           .getRepository(MediaWorker)
-          .decrement({ id: peer.workerId }, 'peerCount', 1);
+          .decrement({ id: transport.workerId }, 'transportCount', 1);
 
-        // this.removeEmptyRoom(peer);
+        // this.removeEmptyRoom(transport);
       })
     );
     return {};
   }
 
   async removeEmptyRoom(data: { roomId: string }) {
-    const exist = await this.dataSource.getRepository(MediaPeer).findOne({
+    const exist = await this.dataSource.getRepository(MediaTransport).findOne({
       select: { id: true },
       where: { roomId: data.roomId },
     });
