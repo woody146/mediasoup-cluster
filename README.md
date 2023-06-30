@@ -261,7 +261,7 @@ Then, navigate to https://localhost:4430
       </td>
       <td>
         <ul>
-          <li>items: array of room object</li>
+          <li>items: room objects</li>
           <ul>
             <li>id: string</li>
             <li>createDate: Date</li>
