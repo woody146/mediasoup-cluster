@@ -1,14 +1,18 @@
 import { types } from 'mediasoup';
 
 import { constants } from '../constants.js';
-import { MediaConsumer, MediaPeer, MediaWorker } from '../entities/index.js';
+import {
+  MediaConsumer,
+  MediaTransport,
+  MediaWorker,
+} from '../entities/index.js';
 import { fetchApi } from '../utils/api.js';
 import { BaseService, ServiceError } from './base.js';
 import { RoomService } from './room.js';
 import { RouterService } from './router.js';
 import { MediaProducer } from '../entities/media.producer.js';
 
-export class PeerService extends BaseService {
+export class TransportService extends BaseService {
   async createProducer(data: {
     roomId: string;
     userId?: string;
@@ -29,23 +33,23 @@ export class PeerService extends BaseService {
       method: 'POST',
       data: { routerId: room.routerId },
     });
-    const mediaPeer = new MediaPeer();
-    mediaPeer.id = result.id;
-    mediaPeer.routerId = room.routerId;
-    mediaPeer.workerId = room.worker.id;
-    mediaPeer.type = constants.PRODUCER;
-    mediaPeer.roomId = room.id;
-    mediaPeer.userId = data.userId;
+    const mediaTransport = new MediaTransport();
+    mediaTransport.id = result.id;
+    mediaTransport.routerId = room.routerId;
+    mediaTransport.workerId = room.worker.id;
+    mediaTransport.type = constants.PRODUCER;
+    mediaTransport.roomId = room.id;
+    mediaTransport.userId = data.userId;
 
-    await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
+    await this.dataSource.getRepository(MediaTransport).save(mediaTransport);
     this.dataSource
       .getRepository(MediaWorker)
-      .increment({ id: room.workerId }, 'peerCount', 1);
+      .increment({ id: room.workerId }, 'transportCount', 1);
     return result;
   }
 
   async produce(data: {
-    peerId: string;
+    transportId: string;
     kind: any;
     rtpParameters: any;
   }): Promise<{
@@ -54,15 +58,15 @@ export class PeerService extends BaseService {
      */
     id: string;
   }> {
-    const peer = await this.get({ peerId: data.peerId });
-    if (peer.type === constants.PRODUCER) {
+    const transport = await this.get({ transportId: data.transportId });
+    if (transport.type === constants.PRODUCER) {
       const result = await fetchApi({
-        host: peer.worker.apiHost,
-        port: peer.worker.apiPort,
+        host: transport.worker.apiHost,
+        port: transport.worker.apiPort,
         path: '/transports/:transportId/producer',
         method: 'POST',
         data: {
-          transportId: peer.id,
+          transportId: transport.id,
           kind: data.kind,
           rtpParameters: data.rtpParameters,
         },
@@ -71,11 +75,11 @@ export class PeerService extends BaseService {
       const producer = new MediaProducer();
       producer.id = result.id;
       producer.kind = data.kind;
-      producer.peerId = peer.id;
+      producer.transportId = transport.id;
       await this.dataSource.getRepository(MediaProducer).save(producer);
       return result;
     }
-    throw new ServiceError(400, 'Invalid peer');
+    throw new ServiceError(400, 'Invalid transport');
   }
 
   async createConsumer(data: { routerId: string; userId?: string }): Promise<{
@@ -94,18 +98,18 @@ export class PeerService extends BaseService {
       method: 'POST',
       data: { routerId: router.id },
     });
-    const mediaPeer = new MediaPeer();
-    mediaPeer.id = result.id;
-    mediaPeer.routerId = router.id;
-    mediaPeer.workerId = router.worker.id;
-    mediaPeer.type = constants.CONSUMER;
-    mediaPeer.roomId = router.roomId;
-    mediaPeer.userId = data.userId;
+    const mediaTransport = new MediaTransport();
+    mediaTransport.id = result.id;
+    mediaTransport.routerId = router.id;
+    mediaTransport.workerId = router.worker.id;
+    mediaTransport.type = constants.CONSUMER;
+    mediaTransport.roomId = router.roomId;
+    mediaTransport.userId = data.userId;
 
-    await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
+    await this.dataSource.getRepository(MediaTransport).save(mediaTransport);
     this.dataSource
       .getRepository(MediaWorker)
-      .increment({ id: router.workerId }, 'peerCount', 1);
+      .increment({ id: router.workerId }, 'transportCount', 1);
     return result;
   }
 
@@ -130,23 +134,23 @@ export class PeerService extends BaseService {
       method: 'POST',
       data: { routerId: room.routerId },
     });
-    const mediaPeer = new MediaPeer();
-    mediaPeer.id = result.id;
-    mediaPeer.routerId = room.routerId;
-    mediaPeer.workerId = room.worker.id;
-    mediaPeer.type = constants.CONSUMER;
-    mediaPeer.roomId = room.id;
-    mediaPeer.userId = data.userId;
+    const mediaTransport = new MediaTransport();
+    mediaTransport.id = result.id;
+    mediaTransport.routerId = room.routerId;
+    mediaTransport.workerId = room.worker.id;
+    mediaTransport.type = constants.CONSUMER;
+    mediaTransport.roomId = room.id;
+    mediaTransport.userId = data.userId;
 
-    await this.dataSource.getRepository(MediaPeer).save(mediaPeer);
+    await this.dataSource.getRepository(MediaTransport).save(mediaTransport);
     this.dataSource
       .getRepository(MediaWorker)
-      .increment({ id: room.workerId }, 'peerCount', 1);
+      .increment({ id: room.workerId }, 'transportCount', 1);
     return result;
   }
 
   async consume(data: {
-    peerId: string;
+    transportId: string;
     producerId: string;
     rtpCapabilities: any;
   }): Promise<{
@@ -155,21 +159,21 @@ export class PeerService extends BaseService {
      */
     id: string;
   }> {
-    const peer = await this.get({ peerId: data.peerId });
-    if (peer.type === constants.CONSUMER) {
+    const transport = await this.get({ transportId: data.transportId });
+    if (transport.type === constants.CONSUMER) {
       await this.createService(RouterService).checkToPipe({
-        routerId: peer.routerId,
+        routerId: transport.routerId,
         producerId: data.producerId,
       });
 
       const result = await fetchApi({
-        host: peer.worker.apiHost,
-        port: peer.worker.apiPort,
+        host: transport.worker.apiHost,
+        port: transport.worker.apiPort,
         path: '/transports/:transportId/consumer',
         method: 'POST',
         data: {
-          transportId: peer.id,
-          routerId: peer.routerId,
+          transportId: transport.id,
+          routerId: transport.routerId,
           producerId: data.producerId,
           rtpCapabilities: data.rtpCapabilities,
         },
@@ -178,73 +182,75 @@ export class PeerService extends BaseService {
       const consumer = new MediaConsumer();
       consumer.id = result.id;
       consumer.producerId = data.producerId;
-      consumer.peerId = peer.id;
+      consumer.transportId = transport.id;
       await this.dataSource.getRepository(MediaConsumer).save(consumer);
       return result;
     }
-    throw new ServiceError(400, 'Invalid type peer');
+    throw new ServiceError(400, 'Invalid type transport');
   }
 
-  async connectProducer(data: { peerId: string; dtlsParameters: any }) {
-    const peer = await this.get({ peerId: data.peerId });
-    if (peer.type === constants.PRODUCER) {
+  async connectProducer(data: { transportId: string; dtlsParameters: any }) {
+    const transport = await this.get({ transportId: data.transportId });
+    if (transport.type === constants.PRODUCER) {
       await fetchApi({
-        host: peer.worker.apiHost,
-        port: peer.worker.apiPort,
+        host: transport.worker.apiHost,
+        port: transport.worker.apiPort,
         path: `/producer_transports/:transportId/connect`,
         method: 'POST',
         data: {
-          transportId: peer.id,
+          transportId: transport.id,
           dtlsParameters: data.dtlsParameters,
         },
       });
       return {};
     }
-    throw new ServiceError(400, 'Invalid type peer');
+    throw new ServiceError(400, 'Invalid type transport');
   }
 
-  async connectConsumer(data: { peerId: string; dtlsParameters: any }) {
-    const peer = await this.get({ peerId: data.peerId });
-    if (peer.type === constants.CONSUMER) {
+  async connectConsumer(data: { transportId: string; dtlsParameters: any }) {
+    const transport = await this.get({ transportId: data.transportId });
+    if (transport.type === constants.CONSUMER) {
       await fetchApi({
-        host: peer.worker.apiHost,
-        port: peer.worker.apiPort,
+        host: transport.worker.apiHost,
+        port: transport.worker.apiPort,
         path: `/consumer_transports/:transportId/connect`,
         method: 'POST',
         data: {
-          transportId: peer.id,
+          transportId: transport.id,
           dtlsParameters: data.dtlsParameters,
         },
       });
       return {};
     }
-    throw new ServiceError(400, 'Invalid type peer');
+    throw new ServiceError(400, 'Invalid type transport');
   }
 
-  async resume(data: { peerId: string; consumerId: string }) {
-    const peer = await this.get({ peerId: data.peerId });
-    if (peer.type === constants.CONSUMER) {
+  async resume(data: { transportId: string; consumerId: string }) {
+    const transport = await this.get({ transportId: data.transportId });
+    if (transport.type === constants.CONSUMER) {
       await fetchApi({
-        host: peer.worker.apiHost,
-        port: peer.worker.apiPort,
+        host: transport.worker.apiHost,
+        port: transport.worker.apiPort,
         path: '/consumers/:consumerId/resume',
         method: 'POST',
         data: { consumerId: data.consumerId },
       });
       return {};
     }
-    throw new ServiceError(400, 'Invalid peer');
+    throw new ServiceError(400, 'Invalid transport');
   }
 
-  async get(data: { peerId: string }) {
-    const peer = await this.dataSource.getRepository(MediaPeer).findOne({
-      relations: { worker: true },
-      where: { id: data.peerId },
-    });
-    if (peer) {
-      return peer;
+  async get(data: { transportId: string }) {
+    const transport = await this.dataSource
+      .getRepository(MediaTransport)
+      .findOne({
+        relations: { worker: true },
+        where: { id: data.transportId },
+      });
+    if (transport) {
+      return transport;
     }
-    throw new ServiceError(404, 'Peer not found');
+    throw new ServiceError(404, 'Transport not found');
   }
 
   async getProducers(data: { roomId: string }): Promise<{
@@ -253,7 +259,7 @@ export class PeerService extends BaseService {
       producers: Array<{ id: string; kind: string }>;
     }>;
   }> {
-    const items = (await this.dataSource.getRepository(MediaPeer).find({
+    const items = (await this.dataSource.getRepository(MediaTransport).find({
       relations: { producers: true },
       select: ['id', 'producers'],
       where: {

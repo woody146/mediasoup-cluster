@@ -22,7 +22,8 @@ export class WorkerService extends BaseService {
       const dbWorker = new MediaWorker();
       dbWorker.apiHost = process.env.API_HOST || '127.0.0.1';
       dbWorker.apiPort = Number(process.env.PORT || 3000);
-      dbWorker.maxPeer = Number(process.env.SLAVE_MAX_PEER_PER_WORKER) || 100;
+      dbWorker.maxTransport =
+        Number(process.env.SLAVE_MAX_TRANSPORT_PER_WORKER) || 100;
       dbWorker.for = process.env.SLAVE_FOR || constants.CONSUMER;
       dbWorker.pid = worker.pid;
       return dbWorker;
@@ -47,7 +48,7 @@ export class WorkerService extends BaseService {
       .select('worker')
       .from(MediaWorker, 'worker')
       .where('worker.for = :for', { for: type })
-      .andWhere('worker.peerCount < worker.maxPeer')
+      .andWhere('worker.transportCount < worker.maxTransport')
       .getOne();
     if (worker) {
       return worker;

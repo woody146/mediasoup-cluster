@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { MediaRoom } from './media.room.js';
-import { MediaPeer } from './media.peer.js';
+import { MediaTransport } from './media.transport.js';
 import { MediaRouter } from './media.router.js';
 
 @Entity()
@@ -29,16 +29,16 @@ export class MediaWorker extends BaseEntity {
   pid!: number;
 
   @Column('integer', { default: 1e9 })
-  maxPeer!: number;
+  maxTransport!: number;
 
   @Column('integer', { default: 0 })
-  peerCount!: number;
+  transportCount!: number;
 
   @OneToMany(() => MediaRoom, (room) => room.worker)
   rooms!: MediaRoom[];
 
-  @OneToMany(() => MediaPeer, (peer) => peer.worker)
-  peers!: MediaPeer[];
+  @OneToMany(() => MediaTransport, (transport) => transport.worker)
+  transports!: MediaTransport[];
 
   @OneToMany(() => MediaRouter, (router) => router.worker)
   routers!: MediaRouter[];

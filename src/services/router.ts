@@ -50,7 +50,7 @@ export class RouterService extends BaseService {
       .createQueryBuilder(MediaRouter, 'router')
       .leftJoinAndSelect('router.worker', 'worker')
       .where('router.roomId = :roomId', { roomId: data.roomId })
-      .andWhere('worker.peerCount < worker.maxPeer')
+      .andWhere('worker.transportCount < worker.maxTransport')
       .getOne();
     if (router) {
       const result = await fetchApi({

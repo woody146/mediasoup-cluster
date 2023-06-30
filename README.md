@@ -106,7 +106,7 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>POST</td>
-      <td>/rooms/:roomId/producer_peers<br /><i>create producer peer</i></td>
+      <td>/rooms/:roomId/producer_transports<br /><i>create producer transport</i></td>
       <td>
         <ul>
          <li>userId: string</li>
@@ -114,7 +114,7 @@ Then, navigate to https://localhost:4430
       </td>
       <td>
        <ul>
-         <li>id: peer id</li>
+         <li>id: transport id</li>
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportIceCandidate">iceCandidates</a<</li>
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportIceParameters">iceParameters</a<</li>
@@ -123,7 +123,7 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>POST</td>
-      <td>/producer_peers/:peerId/connect<br /><i>make peer connect</i></td>
+      <td>/producer_transports/:transportId/connect<br /><i>make transport connect</i></td>
       <td>
         <ul>
           <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
@@ -133,7 +133,7 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>POST</td>
-      <td>/producer_peers/:peerId/produce<br /><i>make peer produce</i></td>
+      <td>/producer_transports/:transportId/produce<br /><i>make transport produce</i></td>
       <td>
         <ul>
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/rtp-parameters-and-capabilities/#MediaKind">kind</a</li>
@@ -157,14 +157,14 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>GET</td>
-      <td>/rooms/:roomId/producer_peers<br /><i>get producer peer list</i></td>
+      <td>/rooms/:roomId/producer_transports<br /><i>get producer transport list</i></td>
       <td>
       </td>
       <td>
       <ul>
         <li>items: array of objects</li>
         <ul>
-          <li>id: peer id</li>
+          <li>id: transport id</li>
           <li>producers: Array<{ id: string; kind: string }></li>
         </ul>
       </td>
@@ -186,7 +186,7 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>POST</td>
-      <td>/router/:routerId/consumer_peers<br /><i>create consumer peer</i></td>
+      <td>/router/:routerId/consumer_transports<br /><i>create consumer transport</i></td>
       <td>
         <ul>
          <li>userId: string</li>
@@ -194,7 +194,7 @@ Then, navigate to https://localhost:4430
       </td>
       <td>
        <ul>
-         <li>id: peer id</li>
+         <li>id: transport id</li>
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportIceCandidate">iceCandidates</a<</li>
          <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportIceParameters">iceParameters</a<</li>
@@ -203,7 +203,7 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>POST</td>
-      <td>/consumer_peers/:peerId/connect<br /><i>make peer connect</i></td>
+      <td>/consumer_transports/:transportId/connect<br /><i>make transport connect</i></td>
       <td>
         <ul>
           <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
@@ -213,7 +213,7 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>POST</td>
-      <td>/consumer_peers/:peerId/consume<br /><i>make peer consume</i></td>
+      <td>/consumer_transports/:transportId/consume<br /><i>make transport consume</i></td>
       <td>
         <ul>
          <li>producerId: string</li>
@@ -228,7 +228,7 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>POST</td>
-      <td>/consumer_peers/:peerId/resume<br /><i>make consumer resume after connected</i></td>
+      <td>/consumer_transports/:transportId/resume<br /><i>make consumer resume after connected</i></td>
       <td>
         <ul>
          <li>consumerId: string</li>
