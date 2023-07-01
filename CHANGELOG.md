@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/woody146/mediasoup-cluster/compare/v1.2.0...v2.0.0) (2023-07-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* change peer to transport
+* change return result of getProducers()
+
+### Features
+
+* add options.staticFolder to startServer() ([70ac1af](https://github.com/woody146/mediasoup-cluster/commit/70ac1af3800d2376c82034c6e2125b5e922d0fb4))
+* change peer to transport ([927ad7a](https://github.com/woody146/mediasoup-cluster/commit/927ad7abb84cf07adc8f036791c5bfbedf2dacf5))
+* get room list api ([1bbcbb3](https://github.com/woody146/mediasoup-cluster/commit/1bbcbb3faa05591754269a48fe15d1ac8fc7c045))
+
+
+### Bug Fixes
+
+* create router for inexistent room ([810116b](https://github.com/woody146/mediasoup-cluster/commit/810116b1436159fe4cd82383b6d90ed7f13b7b43))
+* error import ([b096128](https://github.com/woody146/mediasoup-cluster/commit/b09612859b561a68c2be5668c2800335c8abc0e4))
+* not remove empty room automatically ([9445504](https://github.com/woody146/mediasoup-cluster/commit/944550455e7a933bdfed37a417e39389ce7e5a1c))
+* produce if user checks box ([8b80911](https://github.com/woody146/mediasoup-cluster/commit/8b80911ae9e55e7768902c537164b313ab6a2d54))
+* record multi stream ([a69a849](https://github.com/woody146/mediasoup-cluster/commit/a69a849a45393dbb705cf0e00e4213114c2b0bab))
+
+
+* change return result of getProducers() ([a611033](https://github.com/woody146/mediasoup-cluster/commit/a61103336d142ae01ff076fa4ced7568303549f8))
+
 ## [1.2.0](https://github.com/woody146/mediasoup-cluster/compare/v1.1.0...v1.2.0) (2023-06-22)
 
 
