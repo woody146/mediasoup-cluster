@@ -41,9 +41,9 @@ class MediasoupConsumerManager {
     };
   }
 
-  resume(data: { consumerId: string }) {
+  async resume(data: { consumerId: string }) {
     const consumer = this.get(data);
-    consumer.resume();
+    await consumer.resume();
     return {};
   }
 
