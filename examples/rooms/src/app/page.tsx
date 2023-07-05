@@ -12,7 +12,6 @@ import {
 } from '../components';
 
 export default function Home() {
-  const [routerId, setRouterId] = useState<string>();
   const [room, setRoom] = useState<ClientRoom>();
   const [user, setUser] = useState('');
 
@@ -21,17 +20,16 @@ export default function Home() {
   }, []);
 
   const updateDevice = async (data: any) => {
-    const clientRoom = new ClientRoom(data.roomId);
-    clientRoom.initDevice({
+    const clientRoom = new ClientRoom(data.roomId, data.routerId);
+    await clientRoom.initDevice({
       routerRtpCapabilities: data.rtpCapabilities,
     });
     setRoom(clientRoom);
-    setRouterId(data.routerId);
   };
 
   return (
     <div className="text-center p-8">
-      {room && routerId ? (
+      {room ? (
         <div>
           <h3 className="my-4">
             <ExitRoom
@@ -49,7 +47,7 @@ export default function Home() {
             <div />
             <div>
               <ConsumerCloner roomId={room.roomId} />
-              <Consumers room={room} routerId={routerId} userId={user} />
+              <Consumers room={room} userId={user} />
             </div>
           </div>
         </div>

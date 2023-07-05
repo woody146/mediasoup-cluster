@@ -60,12 +60,10 @@ export function Consumer({
 
 export function Consumers({
   room,
-  routerId,
   userId,
   display = true,
 }: {
   room: ClientRoom;
-  routerId: string;
   userId: string;
   display?: boolean;
 }) {
@@ -77,7 +75,7 @@ export function Consumers({
 
   const initRecvTransport = async () => {
     const data = await fetchApi({
-      path: `/api/router/${routerId}/consumer_transports`,
+      path: `/api/router/${room.routerId}/consumer_transports`,
       method: 'POST',
       data: { userId: userId },
     });
