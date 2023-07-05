@@ -8,9 +8,11 @@ import { Recorder } from './Recorder';
 export function Consumer({
   producers,
   room,
+  display = true,
 }: {
   room: ClientRoom;
   producers: Record<string, any>;
+  display?: boolean;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const stream = useMemo(() => {
@@ -48,9 +50,11 @@ export function Consumer({
   }, []);
 
   return (
-    <div className="flex flex-col gap-4">
-      <video ref={videoRef} controls autoPlay playsInline />
-    </div>
+    display && (
+      <div className="flex flex-col gap-4">
+        <video ref={videoRef} controls autoPlay playsInline />
+      </div>
+    )
   );
 }
 
@@ -58,10 +62,12 @@ export function Consumers({
   room,
   routerId,
   userId,
+  display = true,
 }: {
   room: ClientRoom;
   routerId: string;
   userId: string;
+  display?: boolean;
 }) {
   const [items, setItems] = useState<Array<any>>([]);
   const [log, setLog] = useState('');
@@ -113,7 +119,7 @@ export function Consumers({
     <div className="flex flex-col gap-4">
       <Recorder stream={streamsMixer.getMixedStream()} type="audio" />
       <button
-        className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500"
+        className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border rounded-md shadow-sm border-2 border-blue-500"
         onClick={() => loadProducers()}
       >
         Refresh
@@ -122,7 +128,11 @@ export function Consumers({
       {transport &&
         items.map((item) => (
           <div key={item.id} className="mt-4">
-            <Consumer room={room} producers={item.producers} />
+            <Consumer
+              room={room}
+              producers={item.producers}
+              display={display}
+            />
           </div>
         ))}
     </div>

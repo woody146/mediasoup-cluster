@@ -68,7 +68,7 @@ export function Producer({
     <div className="flex flex-col">
       <video ref={ref} controls autoPlay playsInline></video>
       <div className="pt-4">{log}</div>
-      <div className="pt-4 flex justify-center content-center space-x-4">
+      <div className="pt-4 flex justify-center space-x-4">
         <div>
           <input
             id="useVideo"
@@ -92,7 +92,7 @@ export function Producer({
           <label htmlFor="useAudio">Audio</label>
         </div>
         <button
-          className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-blue-500 disabled:opacity-50"
+          className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border rounded-md shadow-sm border-2 border-blue-500 disabled:opacity-50"
           disabled={success}
           onClick={() =>
             produce().then(() => {

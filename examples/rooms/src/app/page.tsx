@@ -3,6 +3,7 @@ import { ClientRoom } from 'mediasoup-client-utils';
 import { useEffect, useState } from 'react';
 import {
   Consumers,
+  ConsumerCloner,
   CreateRoom,
   DeleteRoom,
   ExitRoom,
@@ -46,14 +47,20 @@ export default function Home() {
             <div />
             <Producer room={room} userId={user} />
             <div />
-            <Consumers room={room} routerId={routerId} userId={user} />
+            <div>
+              <ConsumerCloner roomId={room.roomId} />
+              <Consumers room={room} routerId={routerId} userId={user} />
+            </div>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col space-y-8">
-          <CreateRoom onSuccess={updateDevice} />
-          <JoinRoom onSuccess={updateDevice} />
-          <DeleteRoom />
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          <div />
+          <div className="flex flex-col space-y-8">
+            <CreateRoom onSuccess={updateDevice} />
+            <JoinRoom onSuccess={updateDevice} />
+            <DeleteRoom />
+          </div>
         </div>
       )}
     </div>

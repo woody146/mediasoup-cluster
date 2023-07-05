@@ -48,14 +48,14 @@ export function Recorder({
 
   return recorder ? (
     <button
-      className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-orange-500"
+      className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border rounded-md shadow-sm border-2 border-orange-500"
       onClick={() => stop()}
     >
       Stop
     </button>
   ) : (
     <button
-      className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border border-slate-300 rounded-md shadow-sm ring-2 ring-offset-2 ring-offset-slate-50 ring-green-500"
+      className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border rounded-md shadow-sm border-2 border-green-500"
       onClick={() => start()}
     >
       Record {type}

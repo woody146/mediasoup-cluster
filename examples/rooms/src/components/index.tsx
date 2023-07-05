@@ -4,3 +4,4 @@ export * from './ExitRoom';
 export * from './DeleteRoom';
 export * from './Producer';
 export * from './Consumer';
+export * from './ConsumerCloner';
