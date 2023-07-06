@@ -47,4 +47,34 @@ export class ConsumerService extends BaseService {
     }
     throw new ServiceError(400, 'Invalid type transport');
   }
+
+  async resume(data: { consumerId: string }) {
+    const consumer = await this.get(data);
+    const transport = await this.createService(TransportService).get({
+      transportId: consumer.transportId,
+    });
+    if (transport.type === constants.CONSUMER) {
+      await fetchApi({
+        host: transport.worker.apiHost,
+        port: transport.worker.apiPort,
+        path: '/consumers/:consumerId/resume',
+        method: 'POST',
+        data: { consumerId: data.consumerId },
+      });
+      return {};
+    }
+    throw new ServiceError(400, 'Invalid transport');
+  }
+
+  async get(data: { consumerId: string }) {
+    const consumer = await this.dataSource
+      .getRepository(MediaConsumer)
+      .findOne({
+        where: { id: data.consumerId },
+      });
+    if (consumer) {
+      return consumer;
+    }
+    throw new ServiceError(404, 'Consumer not found');
+  }
 }

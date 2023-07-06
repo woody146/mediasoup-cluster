@@ -39,9 +39,8 @@ export function Consumer({
       videoRef.current.srcObject = stream;
     }
     await fetchApi({
-      path: `/api/consumer_transports/${room.recvTransport?.id}/resume`,
+      path: `/api/consumers/${id}/resume`,
       method: 'POST',
-      data: { consumerId: id },
     });
   };
 

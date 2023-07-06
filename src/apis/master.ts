@@ -88,9 +88,9 @@ export default [
   },
   {
     method: 'POST',
-    url: '/consumer_transports/:transportId/resume',
+    url: '/consumers/:consumerId/resume',
     handler: (data) => {
-      return new TransportService(getDataSource()).resume(data);
+      return new ConsumerService(getDataSource()).resume(data);
     },
   },
   {

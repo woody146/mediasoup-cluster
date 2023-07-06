@@ -146,21 +146,6 @@ export class TransportService extends BaseService {
     throw new ServiceError(400, 'Invalid type transport');
   }
 
-  async resume(data: { transportId: string; consumerId: string }) {
-    const transport = await this.get({ transportId: data.transportId });
-    if (transport.type === constants.CONSUMER) {
-      await fetchApi({
-        host: transport.worker.apiHost,
-        port: transport.worker.apiPort,
-        path: '/consumers/:consumerId/resume',
-        method: 'POST',
-        data: { consumerId: data.consumerId },
-      });
-      return {};
-    }
-    throw new ServiceError(400, 'Invalid transport');
-  }
-
   async get(data: { transportId: string }) {
     const transport = await this.dataSource
       .getRepository(MediaTransport)
