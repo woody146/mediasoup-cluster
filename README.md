@@ -147,6 +147,18 @@ Then, navigate to https://localhost:4430
       </td>
     </tr>
     <tr>
+      <td>POST</td>
+      <td>/producers/:producerId/pause<br /><i>pause producer</i></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>POST</td>
+      <td>/producers/:producerId/resume<br /><i>resume producer</i></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
       <td>DELETE</td>
       <td>/rooms/:roomId<br /><i>delete the room if no one is in the room</i></td>
       <td></td>
