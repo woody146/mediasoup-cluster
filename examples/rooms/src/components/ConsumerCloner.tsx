@@ -3,7 +3,13 @@ import { useEffect, useState } from 'react';
 import { join } from './JoinRoom';
 import { Consumers } from './Consumer';
 
-const InvisibleConsumer = ({ roomId }: { roomId: string }) => {
+const InvisibleConsumer = ({
+  roomId,
+  userId,
+}: {
+  roomId: string;
+  userId: string;
+}) => {
   const [room, setRoom] = useState<ClientRoom>();
 
   useEffect(() => {
@@ -17,12 +23,18 @@ const InvisibleConsumer = ({ roomId }: { roomId: string }) => {
   }, []);
   return (
     <div style={{ display: 'none' }}>
-      {room && <Consumers room={room} userId="test" />}
+      {room && <Consumers room={room} userId={userId} />}
     </div>
   );
 };
 
-export const ConsumerCloner = ({ roomId }: { roomId: string }) => {
+export const ConsumerCloner = ({
+  roomId,
+  userId,
+}: {
+  roomId: string;
+  userId: string;
+}) => {
   const [count, setCount] = useState(0);
 
   const addClients = (quantity: number) => {
@@ -70,7 +82,7 @@ export const ConsumerCloner = ({ roomId }: { roomId: string }) => {
         </button>
       </div>
       {Array.from(Array(count).keys()).map((key) => (
-        <InvisibleConsumer key={key} roomId={roomId} />
+        <InvisibleConsumer key={key} roomId={roomId} userId={userId} />
       ))}
     </div>
   );

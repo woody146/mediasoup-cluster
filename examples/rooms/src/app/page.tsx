@@ -1,6 +1,6 @@
 'use client';
 import { ClientRoom } from 'mediasoup-client-utils';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Consumers,
   ConsumerCloner,
@@ -13,11 +13,7 @@ import {
 
 export default function Home() {
   const [room, setRoom] = useState<ClientRoom>();
-  const [user, setUser] = useState('');
-
-  useEffect(() => {
-    setUser('u' + Math.random().toString().slice(2, 6));
-  }, []);
+  const user = useMemo(() => 'u' + Math.random().toString().slice(2, 6), []);
 
   const updateDevice = async (data: any) => {
     const clientRoom = new ClientRoom(data.roomId, data.routerId);
@@ -46,7 +42,7 @@ export default function Home() {
             <Producer room={room} userId={user} />
             <div />
             <div>
-              <ConsumerCloner roomId={room.roomId} />
+              <ConsumerCloner roomId={room.roomId} userId={user} />
               <Consumers room={room} userId={user} />
             </div>
           </div>
