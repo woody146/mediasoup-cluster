@@ -109,6 +109,20 @@ export default [
   },
   {
     method: 'POST',
+    url: '/producers/:producerId/resume',
+    handler: (data) => {
+      return mediasoupProducerManager.resume(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/producers/:producerId/pause',
+    handler: (data) => {
+      return mediasoupProducerManager.pause(data);
+    },
+  },
+  {
+    method: 'POST',
     url: '/consumers/:consumerId/resume',
     handler: (data) => {
       return mediasoupConsumerManager.resume(data);

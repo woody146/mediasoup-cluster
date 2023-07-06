@@ -3,6 +3,7 @@ import {
   RoomService,
   RouterService,
   UserService,
+  ProducerService,
 } from '../services/index.js';
 import { RouteConfig, getDataSource } from '../utils/index.js';
 
@@ -95,7 +96,21 @@ export default [
     method: 'POST',
     url: '/producer_transports/:transportId/produce',
     handler: (data) => {
-      return new TransportService(getDataSource()).produce(data);
+      return new ProducerService(getDataSource()).create(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/producers/:producerId/resume',
+    handler: (data) => {
+      return new ProducerService(getDataSource()).resume(data);
+    },
+  },
+  {
+    method: 'POST',
+    url: '/producers/:producerId/pause',
+    handler: (data) => {
+      return new ProducerService(getDataSource()).pause(data);
     },
   },
   {

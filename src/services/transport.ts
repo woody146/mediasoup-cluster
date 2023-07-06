@@ -10,7 +10,6 @@ import { fetchApi } from '../utils/api.js';
 import { BaseService, ServiceError } from './base.js';
 import { RoomService } from './room.js';
 import { RouterService } from './router.js';
-import { MediaProducer } from '../entities/media.producer.js';
 
 export class TransportService extends BaseService {
   async createProducer(data: {
@@ -46,40 +45,6 @@ export class TransportService extends BaseService {
       .getRepository(MediaWorker)
       .increment({ id: room.workerId }, 'transportCount', 1);
     return result;
-  }
-
-  async produce(data: {
-    transportId: string;
-    kind: any;
-    rtpParameters: any;
-  }): Promise<{
-    /**
-     * Producer id
-     */
-    id: string;
-  }> {
-    const transport = await this.get({ transportId: data.transportId });
-    if (transport.type === constants.PRODUCER) {
-      const result = await fetchApi({
-        host: transport.worker.apiHost,
-        port: transport.worker.apiPort,
-        path: '/transports/:transportId/producer',
-        method: 'POST',
-        data: {
-          transportId: transport.id,
-          kind: data.kind,
-          rtpParameters: data.rtpParameters,
-        },
-      });
-
-      const producer = new MediaProducer();
-      producer.id = result.id;
-      producer.kind = data.kind;
-      producer.transportId = transport.id;
-      await this.dataSource.getRepository(MediaProducer).save(producer);
-      return result;
-    }
-    throw new ServiceError(400, 'Invalid transport');
   }
 
   async createConsumer(data: { routerId: string; userId?: string }): Promise<{
