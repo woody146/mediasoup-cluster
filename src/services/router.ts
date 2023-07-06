@@ -68,14 +68,15 @@ export class RouterService extends BaseService {
   checkToPipe(data: { routerId: string; producerId: string }) {
     return this.entityManager.transaction(async (entityManager) => {
       const router = await entityManager.getRepository(MediaRouter).findOne({
-        lock: { mode: 'pessimistic_read' },
+        lock: { mode: 'pessimistic_write' },
         where: { id: data.routerId },
       });
+
       if (router && !router.pipedProducers.includes(data.producerId)) {
-        const room = await this.createService(RoomService).get({
+        const room = await new RoomService(entityManager).get({
           roomId: router.roomId,
         });
-        const worker = await this.createService(WorkerService).get({
+        const worker = await new WorkerService(entityManager).get({
           workerId: router.workerId,
         });
 
@@ -94,7 +95,7 @@ export class RouterService extends BaseService {
         });
 
         router.pipedProducers.push(data.producerId);
-        entityManager.save(router);
+        await entityManager.save(router);
       }
     });
   }
