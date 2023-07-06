@@ -1,12 +1,12 @@
-import { type DataSource } from 'typeorm';
+import type { EntityManager } from 'typeorm';
 
 export class BaseService {
-  constructor(protected dataSource: DataSource) {}
+  constructor(protected entityManager: EntityManager) {}
 
   createService<T extends BaseService>(
-    serviceClass: new (dataSource: DataSource) => T
+    serviceClass: new (entityManager: EntityManager) => T
   ) {
-    return new serviceClass(this.dataSource);
+    return new serviceClass(this.entityManager);
   }
 }
 

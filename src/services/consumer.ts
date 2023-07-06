@@ -42,7 +42,7 @@ export class ConsumerService extends BaseService {
       consumer.id = result.id;
       consumer.producerId = data.producerId;
       consumer.transportId = transport.id;
-      await this.dataSource.getRepository(MediaConsumer).save(consumer);
+      await this.entityManager.getRepository(MediaConsumer).save(consumer);
       return result;
     }
     throw new ServiceError(400, 'Invalid type transport');
@@ -67,7 +67,7 @@ export class ConsumerService extends BaseService {
   }
 
   async get(data: { consumerId: string }) {
-    const consumer = await this.dataSource
+    const consumer = await this.entityManager
       .getRepository(MediaConsumer)
       .findOne({
         where: { id: data.consumerId },

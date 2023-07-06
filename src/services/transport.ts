@@ -36,8 +36,8 @@ export class TransportService extends BaseService {
     mediaTransport.roomId = room.id;
     mediaTransport.userId = data.userId;
 
-    await this.dataSource.getRepository(MediaTransport).save(mediaTransport);
-    this.dataSource
+    await this.entityManager.getRepository(MediaTransport).save(mediaTransport);
+    this.entityManager
       .getRepository(MediaWorker)
       .increment({ id: room.workerId }, 'transportCount', 1);
     return result;
@@ -67,8 +67,8 @@ export class TransportService extends BaseService {
     mediaTransport.roomId = router.roomId;
     mediaTransport.userId = data.userId;
 
-    await this.dataSource.getRepository(MediaTransport).save(mediaTransport);
-    this.dataSource
+    await this.entityManager.getRepository(MediaTransport).save(mediaTransport);
+    this.entityManager
       .getRepository(MediaWorker)
       .increment({ id: router.workerId }, 'transportCount', 1);
     return result;
@@ -103,8 +103,8 @@ export class TransportService extends BaseService {
     mediaTransport.roomId = room.id;
     mediaTransport.userId = data.userId;
 
-    await this.dataSource.getRepository(MediaTransport).save(mediaTransport);
-    this.dataSource
+    await this.entityManager.getRepository(MediaTransport).save(mediaTransport);
+    this.entityManager
       .getRepository(MediaWorker)
       .increment({ id: room.workerId }, 'transportCount', 1);
     return result;
@@ -147,7 +147,7 @@ export class TransportService extends BaseService {
   }
 
   async get(data: { transportId: string }) {
-    const transport = await this.dataSource
+    const transport = await this.entityManager
       .getRepository(MediaTransport)
       .findOne({
         relations: { worker: true },
@@ -166,7 +166,7 @@ export class TransportService extends BaseService {
       producers: Array<{ id: string; kind: string }>;
     }>;
   }> {
-    const items = (await this.dataSource.getRepository(MediaTransport).find({
+    const items = (await this.entityManager.getRepository(MediaTransport).find({
       relations: { producers: true },
       select: ['id', 'producers', 'userId'],
       where: {

@@ -35,7 +35,7 @@ export class ProducerService extends BaseService {
       producer.id = result.id;
       producer.kind = data.kind;
       producer.transportId = transport.id;
-      await this.dataSource.getRepository(MediaProducer).save(producer);
+      await this.entityManager.getRepository(MediaProducer).save(producer);
       return result;
     }
     throw new ServiceError(400, 'Invalid transport');
@@ -72,7 +72,7 @@ export class ProducerService extends BaseService {
   }
 
   async get(data: { producerId: string }) {
-    const producer = await this.dataSource
+    const producer = await this.entityManager
       .getRepository(MediaProducer)
       .findOne({
         where: { id: data.producerId },

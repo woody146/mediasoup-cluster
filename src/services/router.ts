@@ -27,7 +27,7 @@ export class RouterService extends BaseService {
     mediaRouter.workerId = worker.id;
     Object.assign(mediaRouter, data);
     try {
-      await this.dataSource.getRepository(MediaRouter).save(mediaRouter);
+      await this.entityManager.getRepository(MediaRouter).save(mediaRouter);
     } catch (e) {
       // violates foreign key constraint because room doesn't exist
       fetchApi({
@@ -46,7 +46,7 @@ export class RouterService extends BaseService {
     id: string;
     rtpCapabilities: types.RtpCapabilities;
   } | null> {
-    const router = await this.dataSource
+    const router = await this.entityManager
       .createQueryBuilder(MediaRouter, 'router')
       .leftJoinAndSelect('router.worker', 'worker')
       .where('router.roomId = :roomId', { roomId: data.roomId })
@@ -66,7 +66,7 @@ export class RouterService extends BaseService {
   }
 
   checkToPipe(data: { routerId: string; producerId: string }) {
-    return this.dataSource.transaction(async (entityManager) => {
+    return this.entityManager.transaction(async (entityManager) => {
       const router = await entityManager.getRepository(MediaRouter).findOne({
         lock: { mode: 'pessimistic_read' },
         where: { id: data.routerId },
@@ -100,7 +100,7 @@ export class RouterService extends BaseService {
   }
 
   async get(data: { routerId: string }) {
-    const router = await this.dataSource.getRepository(MediaRouter).findOne({
+    const router = await this.entityManager.getRepository(MediaRouter).findOne({
       relations: { worker: true },
       where: { id: data.routerId },
     });

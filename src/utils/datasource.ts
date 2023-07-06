@@ -17,3 +17,7 @@ export function getDataSource() {
   }
   return _dataSource;
 }
+
+export function getEntityManager() {
+  return getDataSource().manager;
+}

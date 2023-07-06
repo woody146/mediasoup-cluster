@@ -5,7 +5,7 @@ import { BaseService, ServiceError } from './base.js';
 
 export class WorkerService extends BaseService {
   removeCurrent() {
-    return this.dataSource
+    return this.entityManager
       .createQueryBuilder(MediaWorker, 'MediaWorker')
       .delete()
       .where('apiHost = :apiHost', {
@@ -29,11 +29,11 @@ export class WorkerService extends BaseService {
       return dbWorker;
     });
 
-    await this.dataSource.getRepository(MediaWorker).save(models);
+    await this.entityManager.getRepository(MediaWorker).save(models);
   }
 
   async get(data: { workerId: string }) {
-    const worker = await this.dataSource.getRepository(MediaWorker).findOne({
+    const worker = await this.entityManager.getRepository(MediaWorker).findOne({
       where: { id: data.workerId },
     });
     if (worker) {
@@ -43,7 +43,7 @@ export class WorkerService extends BaseService {
   }
 
   async getFor(type: string) {
-    const worker = await this.dataSource
+    const worker = await this.entityManager
       .createQueryBuilder()
       .select('worker')
       .from(MediaWorker, 'worker')

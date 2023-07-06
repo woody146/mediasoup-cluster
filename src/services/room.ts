@@ -24,12 +24,12 @@ export class RoomService extends BaseService {
     mediaRoom.routerId = result.id;
     mediaRoom.workerId = worker.id;
     Object.assign(mediaRoom, data);
-    await this.dataSource.getRepository(MediaRoom).save(mediaRoom);
+    await this.entityManager.getRepository(MediaRoom).save(mediaRoom);
     return { ...result, id: mediaRoom.id };
   }
 
   async get(data: { roomId: string }) {
-    const room = await this.dataSource.getRepository(MediaRoom).findOne({
+    const room = await this.entityManager.getRepository(MediaRoom).findOne({
       relations: { worker: true },
       where: { id: data.roomId },
     });
@@ -48,7 +48,7 @@ export class RoomService extends BaseService {
     page?: number;
     orderBy?: string;
   }) {
-    const [items, total] = await this.dataSource
+    const [items, total] = await this.entityManager
       .getRepository(MediaRoom)
       .findAndCount({
         take: Math.max(pageSize, 100),
@@ -73,12 +73,12 @@ export class RoomService extends BaseService {
         data: { routerId: room.routerId },
       });
     } catch {}
-    await this.dataSource.getRepository(MediaRoom).remove(room);
+    await this.entityManager.getRepository(MediaRoom).remove(room);
     return {};
   }
 
   async closeRouters(data: { roomId: string }) {
-    const routers = await this.dataSource.getRepository(MediaRouter).find({
+    const routers = await this.entityManager.getRepository(MediaRouter).find({
       relations: { worker: true },
       where: { roomId: data.roomId },
     });
@@ -93,7 +93,7 @@ export class RoomService extends BaseService {
             data: { routerId: router.id },
           });
         } catch {}
-        await this.dataSource.getRepository(MediaRouter).remove(router);
+        await this.entityManager.getRepository(MediaRouter).remove(router);
       })
     );
     return {};

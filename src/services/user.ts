@@ -10,7 +10,7 @@ export class UserService extends BaseService {
    * Otherwise make user logout from all room.
    */
   async logout(data: { userId: string; roomId?: string }) {
-    const transports = await this.dataSource
+    const transports = await this.entityManager
       .getRepository(MediaTransport)
       .find({
         relations: { worker: true },
@@ -30,8 +30,10 @@ export class UserService extends BaseService {
             data: { transportId: transport.id },
           });
         } catch {}
-        await this.dataSource.getRepository(MediaTransport).remove(transport);
-        await this.dataSource
+        await this.entityManager
+          .getRepository(MediaTransport)
+          .remove(transport);
+        await this.entityManager
           .getRepository(MediaWorker)
           .decrement({ id: transport.workerId }, 'transportCount', 1);
 
@@ -42,10 +44,12 @@ export class UserService extends BaseService {
   }
 
   async removeEmptyRoom(data: { roomId: string }) {
-    const exist = await this.dataSource.getRepository(MediaTransport).findOne({
-      select: { id: true },
-      where: { roomId: data.roomId },
-    });
+    const exist = await this.entityManager
+      .getRepository(MediaTransport)
+      .findOne({
+        select: { id: true },
+        where: { roomId: data.roomId },
+      });
     // if no one in room
     if (!exist) {
       this.createService(RoomService).close(data);
