@@ -162,12 +162,13 @@ export class TransportService extends BaseService {
   async getProducers(data: { roomId: string }): Promise<{
     items: Array<{
       id: string;
+      userId: string;
       producers: Array<{ id: string; kind: string }>;
     }>;
   }> {
     const items = (await this.dataSource.getRepository(MediaTransport).find({
       relations: { producers: true },
-      select: ['id', 'producers'],
+      select: ['id', 'producers', 'userId'],
       where: {
         roomId: data.roomId,
         type: constants.PRODUCER,

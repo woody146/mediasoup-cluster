@@ -177,7 +177,8 @@ Then, navigate to https://localhost:4430
         <li>items: array of objects</li>
         <ul>
           <li>id: transport id</li>
-          <li>producers: Array<{ id: string; kind: string }></li>
+          <li>userId: user id</li>
+          <li>producers: { id: string; kind: string }[]</li>
         </ul>
       </td>
     </tr>
