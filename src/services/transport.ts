@@ -1,11 +1,7 @@
 import { types } from 'mediasoup';
 
 import { constants } from '../constants.js';
-import {
-  MediaConsumer,
-  MediaTransport,
-  MediaWorker,
-} from '../entities/index.js';
+import { MediaTransport, MediaWorker } from '../entities/index.js';
 import { fetchApi } from '../utils/api.js';
 import { BaseService, ServiceError } from './base.js';
 import { RoomService } from './room.js';
@@ -112,46 +108,6 @@ export class TransportService extends BaseService {
       .getRepository(MediaWorker)
       .increment({ id: room.workerId }, 'transportCount', 1);
     return result;
-  }
-
-  async consume(data: {
-    transportId: string;
-    producerId: string;
-    rtpCapabilities: any;
-  }): Promise<{
-    /**
-     * Consumer id
-     */
-    id: string;
-  }> {
-    const transport = await this.get({ transportId: data.transportId });
-    if (transport.type === constants.CONSUMER) {
-      await this.createService(RouterService).checkToPipe({
-        routerId: transport.routerId,
-        producerId: data.producerId,
-      });
-
-      const result = await fetchApi({
-        host: transport.worker.apiHost,
-        port: transport.worker.apiPort,
-        path: '/transports/:transportId/consumer',
-        method: 'POST',
-        data: {
-          transportId: transport.id,
-          routerId: transport.routerId,
-          producerId: data.producerId,
-          rtpCapabilities: data.rtpCapabilities,
-        },
-      });
-
-      const consumer = new MediaConsumer();
-      consumer.id = result.id;
-      consumer.producerId = data.producerId;
-      consumer.transportId = transport.id;
-      await this.dataSource.getRepository(MediaConsumer).save(consumer);
-      return result;
-    }
-    throw new ServiceError(400, 'Invalid type transport');
   }
 
   async connectProducer(data: { transportId: string; dtlsParameters: any }) {

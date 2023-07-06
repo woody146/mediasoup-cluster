@@ -4,6 +4,7 @@ import {
   RouterService,
   UserService,
   ProducerService,
+  ConsumerService,
 } from '../services/index.js';
 import { RouteConfig, getDataSource } from '../utils/index.js';
 
@@ -117,7 +118,7 @@ export default [
     method: 'POST',
     url: '/consumer_transports/:transportId/consume',
     handler: (data) => {
-      return new TransportService(getDataSource()).consume(data);
+      return new ConsumerService(getDataSource()).create(data);
     },
   },
   {
