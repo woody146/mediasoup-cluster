@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/woody146/mediasoup-cluster/compare/v2.0.0...v3.0.0) (2023-07-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* change api consumer resume
+
+### Features
+
+* add producer resume/ pause api ([162bc0b](https://github.com/woody146/mediasoup-cluster/commit/162bc0b575d1c7f0671745e31ede42163e828ea6))
+* add userId to return result of getProducers() ([a79bfc7](https://github.com/woody146/mediasoup-cluster/commit/a79bfc7ea9f7e9913ae6fc06f50448fc733e5227))
+
+
+### Bug Fixes
+
+* channel already exists ([e4242a5](https://github.com/woody146/mediasoup-cluster/commit/e4242a563aa2b27cc63b9c7ab6051a8610c77bda))
+* crash server if resume error ([4f0ce36](https://github.com/woody146/mediasoup-cluster/commit/4f0ce36d005991b3ccdc666cfaa1ce942d46fcc1))
+* wrong folder in docker file ([33d2d66](https://github.com/woody146/mediasoup-cluster/commit/33d2d666cc52e2d0a39530488a60ae988343b172))
+
+
+* change api consumer resume ([4dfb068](https://github.com/woody146/mediasoup-cluster/commit/4dfb06822bf1b39d9903e144a3f3954228dea4d6))
+
 ## [2.0.0](https://github.com/woody146/mediasoup-cluster/compare/v1.2.0...v2.0.0) (2023-07-01)
 
 
