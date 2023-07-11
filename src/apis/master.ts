@@ -130,4 +130,11 @@ export default [
       return new UserService(getEntityManager()).logout(data);
     },
   },
+  {
+    method: 'DELETE',
+    url: '/transports/:transportId',
+    handler: (data) => {
+      return new TransportService(getEntityManager()).close(data);
+    },
+  },
 ] as RouteConfig[];

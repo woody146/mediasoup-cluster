@@ -159,6 +159,31 @@ export class TransportService extends BaseService {
     throw new ServiceError(404, 'Transport not found');
   }
 
+  async close(data: { transportId: string }) {
+    const transport = await this.get(data);
+    await this.closeTransport(transport);
+    return {};
+  }
+
+  async closeTransport(transport: MediaTransport) {
+    try {
+      await fetchApi({
+        host: transport.worker.apiHost,
+        port: transport.worker.apiPort,
+        path:
+          transport.type === constants.CONSUMER
+            ? `/consumer_transports/:transportId`
+            : `/producer_transports/:transportId`,
+        method: 'DELETE',
+        data: { transportId: transport.id },
+      });
+    } catch {}
+    await this.entityManager.getRepository(MediaTransport).remove(transport);
+    await this.entityManager
+      .getRepository(MediaWorker)
+      .decrement({ id: transport.workerId }, 'transportCount', 1);
+  }
+
   async getProducers(data: { roomId: string }): Promise<{
     items: Array<{
       id: string;

@@ -259,6 +259,12 @@ Then, navigate to https://localhost:4430
       <td></td>
     </tr>
     <tr>
+      <td>DELETE</td>
+      <td>/transports/:transportId<br /><i>close transport</i></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
       <td>GET</td>
       <td>/rooms<br /><i>get room list in system</i></td>
       <td>

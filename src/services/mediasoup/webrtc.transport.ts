@@ -24,6 +24,9 @@ class MediasoupWebRTCTransportManager {
   async close(data: { transportId: string }) {
     const transport = this.get(data.transportId);
     transport.close();
+    (
+      this.constructor as typeof MediasoupWebRTCTransportManager
+    ).transports.delete(data.transportId);
   }
 }
 
