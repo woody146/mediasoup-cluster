@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/woody146/mediasoup-cluster/compare/v3.0.0...v3.1.0) (2023-07-12)
+
+
+### Features
+
+* add delete transport api ([8054795](https://github.com/woody146/mediasoup-cluster/commit/8054795ac438a941c774e94a58c1a15e3d7ab089))
+
 ## [3.0.0](https://github.com/woody146/mediasoup-cluster/compare/v2.0.0...v3.0.0) (2023-07-07)
 
 
