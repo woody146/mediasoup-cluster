@@ -260,7 +260,7 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>DELETE</td>
-      <td>/transports/:transportId<br /><i>close transport</i></td>
+      <td>/transports/:transportId<br /><i>close producer or consumer transport</i></td>
       <td></td>
       <td></td>
     </tr>
