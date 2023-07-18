@@ -5,3 +5,4 @@ export * from './DeleteRoom';
 export * from './Producer';
 export * from './Consumer';
 export * from './ConsumerCloner';
+export * from './ProducerCloner';

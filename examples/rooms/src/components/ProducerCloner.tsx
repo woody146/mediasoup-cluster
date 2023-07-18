@@ -1,40 +1,16 @@
 import { ClientRoom } from 'mediasoup-client-utils';
-import { useEffect, useState } from 'react';
-import { join } from './JoinRoom';
-import { Consumers } from './Consumer';
+import { useState } from 'react';
 
-const InvisibleConsumer = ({
-  roomId,
+import { Producer } from './Producer';
+
+export const ProducerCloner = ({
+  room,
   userId,
 }: {
-  roomId: string;
+  room: ClientRoom;
   userId: string;
 }) => {
-  const [room, setRoom] = useState<ClientRoom>();
-
-  useEffect(() => {
-    join(roomId, async (data) => {
-      const clientRoom = new ClientRoom(roomId, data.routerId);
-      await clientRoom.initDevice({
-        routerRtpCapabilities: data.rtpCapabilities,
-      });
-      setRoom(clientRoom);
-    });
-  }, []);
-  return (
-    <div style={{ display: 'none' }}>
-      {room && <Consumers room={room} userId={userId} />}
-    </div>
-  );
-};
-
-export const ConsumerCloner = ({
-  roomId,
-  userId,
-}: {
-  roomId: string;
-  userId: string;
-}) => {
+  const [mode, setMode] = useState<'audio' | 'video'>('audio');
   const [count, setCount] = useState(0);
 
   const addClients = (quantity: number) => {
@@ -46,7 +22,7 @@ export const ConsumerCloner = ({
       <div className="grid grid-flow-col justify-stretch mb-4" role="group">
         <button
           type="button"
-          className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border rounded-l-md shadow-sm border-2 border-pink-500"
+          className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border rounded-l-md shadow-sm border-2 border-pink-500 disabled:opacity-50"
           data-te-ripple-init
           data-te-ripple-color="light"
         >
@@ -80,8 +56,34 @@ export const ConsumerCloner = ({
           +100
         </button>
       </div>
+      <div className="pb-4 flex justify-center space-x-4">
+        <div>
+          <input
+            id="videoMode"
+            type="radio"
+            checked={mode === 'video'}
+            onChange={() => setMode('video')}
+            className="focus:ring-blue-500 mr-2"
+            disabled={count > 0}
+          />
+          <label htmlFor="videoMode">Video</label>
+        </div>
+        <div>
+          <input
+            id="audioMode"
+            type="radio"
+            checked={mode === 'audio'}
+            onChange={() => setMode('audio')}
+            className="focus:ring-blue-500 mr-2"
+            disabled={count > 0}
+          />
+          <label htmlFor="audioMode">Audio</label>
+        </div>
+      </div>
       {Array.from(Array(count).keys()).map((key) => (
-        <InvisibleConsumer key={key} roomId={roomId} userId={userId} />
+        <div key={key} style={{ display: 'none' }}>
+          <Producer room={room} userId={userId} autoProduce={mode} />
+        </div>
       ))}
     </div>
   );

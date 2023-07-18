@@ -1,6 +1,6 @@
 import { types } from 'mediasoup-client';
 import { ClientRoom } from 'mediasoup-client-utils';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { fetchApi } from '../services';
 
@@ -41,14 +41,16 @@ const PauseProducer = ({
 export function Producer({
   room,
   userId,
+  autoProduce,
 }: {
   room: ClientRoom;
   userId: string;
+  autoProduce?: 'video' | 'audio';
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [log, setLog] = useState('');
-  const [useVideo, setuseVideo] = useState(false);
-  const [useAudio, setUseAudio] = useState(false);
+  const [useVideo, setuseVideo] = useState(autoProduce === 'video');
+  const [useAudio, setUseAudio] = useState(autoProduce === 'audio');
   const [videoProducer, setVideoProducer] = useState<types.Producer>();
   const [audioProducer, setAudioProducer] = useState<types.Producer>();
 
@@ -106,6 +108,12 @@ export function Producer({
       throw err;
     }
   };
+
+  useEffect(() => {
+    if (autoProduce) {
+      produce();
+    }
+  }, []);
 
   return (
     <div className="flex flex-col">

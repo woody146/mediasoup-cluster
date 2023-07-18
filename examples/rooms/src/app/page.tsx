@@ -9,6 +9,7 @@ import {
   ExitRoom,
   JoinRoom,
   Producer,
+  ProducerCloner,
 } from '../components';
 
 export default function Home() {
@@ -39,10 +40,17 @@ export default function Home() {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div />
-            <Producer room={room} userId={user} />
+            <div>
+              <h4 className="text-xl m-4">Clone producer</h4>
+              <ProducerCloner room={room} userId={user} />
+              <h4 className="text-xl m-4">Simple producer</h4>
+              <Producer room={room} userId={user} />
+            </div>
             <div />
             <div>
+              <h4 className="text-xl m-4">Clone consumer</h4>
               <ConsumerCloner roomId={room.roomId} userId={user} />
+              <h4 className="text-xl m-4">Simple consumer</h4>
               <Consumers room={room} userId={user} />
             </div>
           </div>
