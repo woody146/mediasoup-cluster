@@ -7,6 +7,7 @@ export function Recorder({
   stream: MediaStream;
   type: 'audio' | 'video';
 }) {
+  const [count, setCount] = useState(0);
   const [recorder, setRecorder] = useState<MediaRecorder>();
 
   const start = () => {
@@ -18,7 +19,7 @@ export function Recorder({
           : 'video/webm;codecs=vp9,opus',
     });
     mediaRecorder.ondataavailable = (event) => {
-      console.log(event.data);
+      setCount((c) => c + event.data.size);
       recordData.push(event.data);
     };
     mediaRecorder.onstop = () => {
@@ -37,6 +38,7 @@ export function Recorder({
     };
     mediaRecorder.start(3000);
     setRecorder(mediaRecorder);
+    setCount(0);
   };
 
   const stop = () => {
@@ -51,7 +53,8 @@ export function Recorder({
       className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border rounded-md shadow-sm border-2 border-orange-500"
       onClick={() => stop()}
     >
-      Stop
+      Stop (record{' '}
+      {Intl.NumberFormat('en', { notation: 'compact' }).format(count)})
     </button>
   ) : (
     <button
