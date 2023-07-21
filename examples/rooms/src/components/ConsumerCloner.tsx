@@ -23,7 +23,7 @@ const InvisibleConsumer = ({
   }, []);
   return (
     <div style={{ display: 'none' }}>
-      {room && <Consumers room={room} userId={userId} />}
+      {room && <Consumers room={room} userId={userId} display={false} />}
     </div>
   );
 };

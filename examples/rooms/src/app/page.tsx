@@ -50,8 +50,10 @@ export default function Home() {
             <div>
               <h4 className="text-xl m-4">Clone consumer</h4>
               <ConsumerCloner roomId={room.roomId} userId={user} />
+              {/* <h4 className="text-xl m-4">Hide consumer</h4>
+              <Consumers room={room} userId={user} display={false} /> */}
               <h4 className="text-xl m-4">Simple consumer</h4>
-              <Consumers room={room} userId={user} />
+              <Consumers room={room} userId={user} display={true} />
             </div>
           </div>
         </div>

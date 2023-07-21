@@ -37,6 +37,9 @@ export function Consumer({
     stream.addTrack(consumer.track);
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
+    } else {
+      const element = document.createElement('video');
+      element.srcObject = stream;
     }
     await fetchApi({
       path: `/api/consumers/${id}/resume`,
@@ -101,7 +104,6 @@ export function Consumers({
   };
 
   useEffect(() => {
-    loadProducers();
     initRecvTransport();
     room.onNewConsumer.push((consumer) => {
       if (consumer.kind === 'audio') {
@@ -119,7 +121,7 @@ export function Consumers({
         className="px-4 py-2 font-semibold text-sm bg-white text-slate-700 border rounded-md shadow-sm border-2 border-blue-500"
         onClick={() => loadProducers()}
       >
-        Refresh
+        Get producers
       </button>
       <div className="pt-4">{log}</div>
       {transport &&
