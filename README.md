@@ -290,6 +290,17 @@ Then, navigate to https://localhost:4430
         </ul>
       </td>
     </tr>
+    <tr>
+      <td>GET</td>
+      <td>/rooms/:roomId<br /><i>get room detail</i></td>
+      <td></td>
+      <td>
+        <ul>
+         <li>id: room id</li>
+         <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#router-rtpCapabilities">rtpCapabilities</a></li>
+       </ul>
+      </td>
+    </tr>
   </tbody>
 </table>
 
