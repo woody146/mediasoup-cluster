@@ -199,6 +199,23 @@ Then, navigate to https://localhost:4430
     </tr>
     <tr>
       <td>POST</td>
+      <td>/rooms/:roomId/consumer_transports<br /><i>create consumer transport</i></td>
+      <td>
+        <ul>
+         <li>userId: string</li>
+       </ul>
+      </td>
+      <td>
+       <ul>
+         <li>id: transport id</li>
+         <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportDtlsParameters">dtlsParameters</a</li>
+         <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportIceCandidate">iceCandidates</a<</li>
+         <li><a href="https://mediasoup.org/documentation/v3/mediasoup/api/#WebRtcTransportIceParameters">iceParameters</a<</li>
+       </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>POST</td>
       <td>/router/:routerId/consumer_transports<br /><i>create consumer transport</i></td>
       <td>
         <ul>
