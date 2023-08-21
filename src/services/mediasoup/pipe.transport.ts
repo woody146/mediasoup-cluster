@@ -9,7 +9,7 @@ class MediasoupPipeTransportManager {
   async create(data: { routerId: string }) {
     const router = mediasoupRouterManager.get(data.routerId);
     const transport = await router.createPipeTransport({
-      listenIp: process.env.API_HOST || '127.0.0.1',
+      listenIp: process.env.LISTEN_HOST || '127.0.0.1',
       enableSctp: true,
       numSctpStreams: { OS: 1024, MIS: 1024 },
     });

@@ -9,7 +9,7 @@ export class WorkerService extends BaseService {
       .createQueryBuilder(MediaWorker, 'MediaWorker')
       .delete()
       .where('apiHost = :apiHost', {
-        apiHost: process.env.API_HOST || '127.0.0.1',
+        apiHost: process.env.LISTEN_HOST || '127.0.0.1',
       })
       .andWhere('apiPort = :apiPort', {
         apiPort: Number(process.env.PORT || 3000),
@@ -20,7 +20,7 @@ export class WorkerService extends BaseService {
   async addWorkers(workers: Array<types.Worker>) {
     const models = workers.map((worker) => {
       const dbWorker = new MediaWorker();
-      dbWorker.apiHost = process.env.API_HOST || '127.0.0.1';
+      dbWorker.apiHost = process.env.LISTEN_HOST || '127.0.0.1';
       dbWorker.apiPort = Number(process.env.PORT || 3000);
       dbWorker.maxTransport =
         Number(process.env.SLAVE_MAX_TRANSPORT_PER_WORKER) || 100;
