@@ -41,7 +41,8 @@ Update config in .env file
 // your PostgreSQL server info
 DATABASE_URL = "postgresql://postgres:123456@localhost:5432/mediasoup"
 ...
-// your ip in lan network
+// your ip in internet network
+// https://mediasoup.org/documentation/v3/mediasoup/api/#TransportListenIp
 MEDIASOUP_WEBRTC_TRANSPORT_LISTEN_IPS = '[
    {
       "ip": "192.168.6.143",
