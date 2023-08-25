@@ -178,7 +178,9 @@ export class TransportService extends BaseService {
         data: { transportId: transport.id },
       });
     } catch {}
-    await this.entityManager.getRepository(MediaTransport).remove(transport);
+    await this.entityManager
+      .getRepository(MediaTransport)
+      .delete({ id: transport.id });
     await this.entityManager
       .getRepository(MediaWorker)
       .decrement({ id: transport.workerId }, 'transportCount', 1);

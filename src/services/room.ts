@@ -1,6 +1,11 @@
 import { types } from 'mediasoup';
 import { constants } from '../constants.js';
-import { MediaRoom, MediaRouter } from '../entities/index.js';
+import {
+  MediaRoom,
+  MediaRouter,
+  MediaTransport,
+  MediaWorker,
+} from '../entities/index.js';
 import { fetchApi } from '../utils/index.js';
 import { ServiceError, BaseService } from './base.js';
 import { WorkerService } from './worker.js';
@@ -63,40 +68,47 @@ export class RoomService extends BaseService {
 
   async close(data: { roomId: string }) {
     const room = await this.get(data);
-    await this.closeRouters({ roomId: room.id });
-    try {
-      await fetchApi({
-        host: room.worker.apiHost,
-        port: room.worker.apiPort,
-        path: '/routers/:routerId',
-        method: 'DELETE',
-        data: { routerId: room.routerId },
-      });
-    } catch {}
-    await this.entityManager.getRepository(MediaRoom).remove(room);
+    await this.closeConsumerRouters({ roomId: room.id });
+    await this.closeRouter({ routerId: room.routerId, worker: room.worker });
+
+    await this.entityManager.getRepository(MediaRoom).delete({ id: room.id });
     return {};
   }
 
-  async closeRouters(data: { roomId: string }) {
+  private async closeConsumerRouters(data: { roomId: string }) {
     const routers = await this.entityManager.getRepository(MediaRouter).find({
       relations: { worker: true },
       where: { roomId: data.roomId },
     });
     await Promise.all(
-      routers.map(async (router) => {
-        try {
-          await fetchApi({
-            host: router.worker.apiHost,
-            port: router.worker.apiPort,
-            path: '/routers/:routerId',
-            method: 'DELETE',
-            data: { routerId: router.id },
-          });
-        } catch {}
-        await this.entityManager.getRepository(MediaRouter).remove(router);
-      })
+      routers.map((router) =>
+        this.closeRouter({ routerId: router.id, worker: router.worker })
+      )
     );
     return {};
+  }
+
+  private async closeRouter(data: { routerId: string; worker: MediaWorker }) {
+    try {
+      await fetchApi({
+        host: data.worker.apiHost,
+        port: data.worker.apiPort,
+        path: '/routers/:routerId',
+        method: 'DELETE',
+        data: { routerId: data.routerId },
+      });
+    } catch {}
+    const count = await this.entityManager
+      .getRepository(MediaTransport)
+      .count({ where: { routerId: data.routerId } });
+    if (count > 0) {
+      await this.entityManager
+        .getRepository(MediaWorker)
+        .decrement({ id: data.worker.id }, 'transportCount', count);
+    }
+    await this.entityManager
+      .getRepository(MediaRouter)
+      .delete({ id: data.routerId });
   }
 
   async getCapabilities(data: { roomId: string }): Promise<{
