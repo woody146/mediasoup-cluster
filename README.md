@@ -1,6 +1,6 @@
 # Mediasoup cluster
 
-Cluster use PostgreSQL server to save data of slave servers
+Cluster uses PostgreSQL server to save data of slave servers
 
 ```
                                                            +----------------+
@@ -22,7 +22,7 @@ Cluster use PostgreSQL server to save data of slave servers
 
 ## Quickstart
 
-Build code (must use node **v18**)
+Build code (must use node **v18+**)
 
 ```
 npm install
