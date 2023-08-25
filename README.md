@@ -1,4 +1,4 @@
-## Mediasoup cluster
+# Mediasoup cluster
 
 Cluster use PostgreSQL server to save data of slave servers
 
@@ -22,7 +22,7 @@ Cluster use PostgreSQL server to save data of slave servers
 
 ## Quickstart
 
-Build code
+Build code (must use node **v18**)
 
 ```
 npm install
@@ -35,7 +35,7 @@ Copy env.dev file to .env
 cp .env.dev .env
 ```
 
-Update config in .env file
+Update config in .env file. Detail in [example](https://github.com/woody146/mediasoup-cluster/issues/1#issuecomment-1689558894)
 
 ```js
 // your PostgreSQL server info
