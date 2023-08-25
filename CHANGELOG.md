@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/woody146/mediasoup-cluster/compare/v3.1.0...v4.0.0) (2023-08-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove LISTEN_HOST env
+
+### Bug Fixes
+
+* not update transportCount after closing room ([4123360](https://github.com/woody146/mediasoup-cluster/commit/41233603653ca334a3ded81d251a55444d901abd))
+
+
+* remove LISTEN_HOST env ([4be59d0](https://github.com/woody146/mediasoup-cluster/commit/4be59d0076e08c7bef581a66980102be2e6db248))
+
 ## [3.1.0](https://github.com/woody146/mediasoup-cluster/compare/v3.0.0...v3.1.0) (2023-07-12)
 
 
