@@ -89,7 +89,9 @@ export function Producer({
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         video: useVideo,
-        audio: useAudio,
+        audio: useAudio && {
+          echoCancellation: true,
+        },
       });
       if (useVideo) {
         const producer = await transport.produce({
