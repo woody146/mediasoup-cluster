@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.1.0](https://github.com/woody146/mediasoup-cluster/compare/v4.0.0...v4.1.0) (2023-11-03)
+
+
+### Features
+
+* add success count in Consumer/ProducerCloner ([e56f8a0](https://github.com/woody146/mediasoup-cluster/commit/e56f8a0356711e8d523317fb32dc6f5618aef67b))
+* auto remove worker if many errors ([2424648](https://github.com/woody146/mediasoup-cluster/commit/242464818b980141bd2928bc0d41928555afcfef))
+
 ## [4.0.0](https://github.com/woody146/mediasoup-cluster/compare/v3.1.0...v4.0.0) (2023-08-25)
 
 
