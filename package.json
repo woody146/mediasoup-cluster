@@ -9,7 +9,7 @@
     "start:master": "cross-env PORT=3010 node dist/run_master.js",
     "start:slave:producer": "cross-env PORT=3011 SLAVE_FOR=producer node dist/run_slave.js",
     "start:slave:consumer": "cross-env PORT=3012 SLAVE_FOR=consumer node dist/run_slave.js",
-    "dev": "npm run start:slave:producer",
+    "dev": "npm run start:master",
     "prepare": "husky install"
   },
   "repository": {

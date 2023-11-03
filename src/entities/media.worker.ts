@@ -34,6 +34,9 @@ export class MediaWorker extends BaseEntity {
   @Column('integer', { default: 0 })
   transportCount!: number;
 
+  @Column('integer', { default: 0 })
+  errorCount!: number;
+
   @OneToMany(() => MediaRoom, (room) => room.worker)
   rooms!: MediaRoom[];
 

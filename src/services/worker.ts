@@ -55,4 +55,29 @@ export class WorkerService extends BaseService {
     }
     throw new ServiceError(404, 'Worker not found');
   }
+
+  async updateError(host: string, port: string | number) {
+    const result = await this.entityManager
+      .createQueryBuilder()
+      .update(MediaWorker)
+      .set({
+        errorCount: () => 'errorCount + 1',
+      })
+      .where('apiHost = :host', { host })
+      .andWhere('apiPort = :port', { port })
+      .returning('*')
+      .execute();
+    if (result.raw[0]) {
+      const item = result.raw[0];
+      if (item.errorCount > 5) {
+        // auto remove if many errors
+        await this.entityManager
+          .createQueryBuilder(MediaWorker, 'MediaWorker')
+          .delete()
+          .where('apiHost = :host', { host })
+          .andWhere('apiPort = :port', { port })
+          .execute();
+      }
+    }
+  }
 }
