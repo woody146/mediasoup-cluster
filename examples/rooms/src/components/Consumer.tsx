@@ -103,6 +103,10 @@ export function Consumers({
       onConnected: () => setLog('connected'),
     });
     setTransport(transport);
+    if (!display) {
+      // auto get producers for consumer cloner
+      loadProducers();
+    }
   };
 
   const loadProducers = async () => {
@@ -136,9 +140,11 @@ export function Consumers({
   }, []);
 
   useEffect(() => {
-    const fail = Object.values(success).find((item) => item === false);
-    if (!fail) {
-      onSuccess && onSuccess();
+    if (Object.keys(success).length > 0) {
+      const item = Object.values(success).find((item) => item === false);
+      if (item === undefined) {
+        onSuccess && onSuccess();
+      }
     }
   }, [success]);
 
