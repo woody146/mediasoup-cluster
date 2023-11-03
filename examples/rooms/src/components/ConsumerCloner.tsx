@@ -6,9 +6,11 @@ import { Consumers } from './Consumer';
 const InvisibleConsumer = ({
   roomId,
   userId,
+  onSuccess,
 }: {
   roomId: string;
   userId: string;
+  onSuccess?: () => void;
 }) => {
   const [room, setRoom] = useState<ClientRoom>();
 
@@ -23,7 +25,14 @@ const InvisibleConsumer = ({
   }, []);
   return (
     <div style={{ display: 'none' }}>
-      {room && <Consumers room={room} userId={userId} display={false} />}
+      {room && (
+        <Consumers
+          room={room}
+          userId={userId}
+          display={false}
+          onSuccess={onSuccess}
+        />
+      )}
     </div>
   );
 };
@@ -36,6 +45,7 @@ export const ConsumerCloner = ({
   userId: string;
 }) => {
   const [count, setCount] = useState(0);
+  const [success, setSuccess] = useState(0);
 
   const addClients = (quantity: number) => {
     setCount(count + quantity);
@@ -50,7 +60,7 @@ export const ConsumerCloner = ({
           data-te-ripple-init
           data-te-ripple-color="light"
         >
-          Clients: {count}
+          Clients: {success} / {count}
         </button>
         <button
           type="button"
@@ -81,7 +91,12 @@ export const ConsumerCloner = ({
         </button>
       </div>
       {Array.from(Array(count).keys()).map((key) => (
-        <InvisibleConsumer key={key} roomId={roomId} userId={userId} />
+        <InvisibleConsumer
+          key={key}
+          roomId={roomId}
+          userId={userId}
+          onSuccess={() => setSuccess((v) => v + 1)}
+        />
       ))}
     </div>
   );

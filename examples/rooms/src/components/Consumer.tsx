@@ -9,10 +9,12 @@ export function Consumer({
   producers,
   room,
   display = true,
+  onSuccess,
 }: {
   room: ClientRoom;
   producers: Record<string, any>;
   display?: boolean;
+  onSuccess?: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const stream = useMemo(() => {
@@ -47,8 +49,13 @@ export function Consumer({
     });
   };
 
+  async function init() {
+    await Promise.all(producers.map((item: any) => subscribe(item.id)));
+    onSuccess && onSuccess();
+  }
+
   useEffect(() => {
-    producers.map((item: any) => subscribe(item.id));
+    init();
   }, []);
 
   return (
@@ -64,14 +71,17 @@ export function Consumers({
   room,
   userId,
   display = true,
+  onSuccess,
 }: {
   room: ClientRoom;
   userId: string;
   display?: boolean;
+  onSuccess?: () => void;
 }) {
   const [items, setItems] = useState<Array<any>>([]);
   const [log, setLog] = useState('');
   const [transport, setTransport] = useState<types.Transport>();
+  const [success, setSuccess] = useState<Record<string, boolean>>({});
 
   const streamsMixer = useMemo(() => new MultiStreamsMixer([]), []);
 
@@ -101,6 +111,17 @@ export function Consumers({
       method: 'GET',
     });
     setItems(result.items);
+    setSuccess((oldSuccess) => {
+      const newSuccess: Record<string, boolean> = {};
+      result.items.map((item: any) => {
+        if (oldSuccess[item.id]) {
+          newSuccess[item.id] = oldSuccess[item.id];
+        } else {
+          newSuccess[item.id] = false;
+        }
+      });
+      return newSuccess;
+    });
   };
 
   useEffect(() => {
@@ -113,6 +134,13 @@ export function Consumers({
       }
     });
   }, []);
+
+  useEffect(() => {
+    const fail = Object.values(success).find((item) => item === false);
+    if (!fail) {
+      onSuccess && onSuccess();
+    }
+  }, [success]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -131,6 +159,13 @@ export function Consumers({
               room={room}
               producers={item.producers}
               display={display}
+              onSuccess={() =>
+                setSuccess((oldValue) => {
+                  const newValue = { ...oldValue };
+                  newValue[item.id] = true;
+                  return newValue;
+                })
+              }
             />
           </div>
         ))}

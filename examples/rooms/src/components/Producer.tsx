@@ -42,10 +42,12 @@ export function Producer({
   room,
   userId,
   autoProduce,
+  onSuccess,
 }: {
   room: ClientRoom;
   userId: string;
   autoProduce?: 'video' | 'audio';
+  onSuccess?: () => void;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [log, setLog] = useState('');
@@ -82,6 +84,7 @@ export function Producer({
         if (ref.current) {
           ref.current.srcObject = stream;
         }
+        onSuccess && onSuccess();
         setLog('published');
       },
     });

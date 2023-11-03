@@ -12,6 +12,7 @@ export const ProducerCloner = ({
 }) => {
   const [mode, setMode] = useState<'audio' | 'video'>('audio');
   const [count, setCount] = useState(0);
+  const [success, setSuccess] = useState(0);
 
   const addClients = (quantity: number) => {
     setCount(count + quantity);
@@ -26,7 +27,7 @@ export const ProducerCloner = ({
           data-te-ripple-init
           data-te-ripple-color="light"
         >
-          Clients: {count}
+          Clients: {success} / {count}
         </button>
         <button
           type="button"
@@ -82,7 +83,12 @@ export const ProducerCloner = ({
       </div>
       {Array.from(Array(count).keys()).map((key) => (
         <div key={key} style={{ display: 'none' }}>
-          <Producer room={room} userId={userId} autoProduce={mode} />
+          <Producer
+            room={room}
+            userId={userId}
+            autoProduce={mode}
+            onSuccess={() => setSuccess((v) => v + 1)}
+          />
         </div>
       ))}
     </div>
