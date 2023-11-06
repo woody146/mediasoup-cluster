@@ -1,6 +1,3 @@
-import { WorkerService } from '../services/worker.js';
-import { getEntityManager } from './datasource.js';
-
 function generatePath(urlPattern: string, params: Record<string, any>) {
   const retParams = { ...params };
   const parts = urlPattern.split('/');
@@ -44,19 +41,12 @@ export function fetchApi({
     headers: { 'Content-Type': 'application/json' },
     method,
     body,
-  })
-    .then(async (resp) => {
-      if (resp.status > 400) {
-        const message = await resp.text();
-        throw { code: resp.status, message };
-      } else {
-        return resp.json();
-      }
-    })
-    .catch((e) => {
-      if (port) {
-        new WorkerService(getEntityManager()).updateError(host, port);
-      }
-      throw e;
-    });
+  }).then(async (resp) => {
+    if (resp.status > 400) {
+      const message = await resp.text();
+      throw { code: resp.status, message };
+    } else {
+      return resp.json();
+    }
+  });
 }
