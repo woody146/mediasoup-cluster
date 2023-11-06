@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.1](https://github.com/woody146/mediasoup-cluster/compare/v4.1.0...v4.1.1) (2023-11-06)
+
+
+### Bug Fixes
+
+* component ConsumerCloner doesn't work ([4f9bda2](https://github.com/woody146/mediasoup-cluster/commit/4f9bda292100f3aeb7cd938bbd599cff2da05cd2))
+* not auto remove worker if can't call api ([84923d8](https://github.com/woody146/mediasoup-cluster/commit/84923d8fb3b1a32e92dec9663043dd3ceb95d7b4))
+
 ## [4.1.0](https://github.com/woody146/mediasoup-cluster/compare/v4.0.0...v4.1.0) (2023-11-03)
 
 
